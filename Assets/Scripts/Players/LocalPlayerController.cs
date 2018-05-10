@@ -216,7 +216,7 @@ public class LocalPlayerController : MonoBehaviour {
         GiveWeapon(defWeapon);
     }
 
-    public void GiveWeapon(GameObject weapon)
+    public WeaponBase GiveWeapon(GameObject weapon)
     {
         GameObject gun = GetCurrentWeapon();
         if (gun != null)
@@ -230,7 +230,8 @@ public class LocalPlayerController : MonoBehaviour {
         theWeapon.transform.localRotation = Quaternion.identity;
         theWeapon.transform.localPosition = weaponOffset;
         theWeapon.transform.localScale = new Vector2(1f, 1f);
-        
+
+        return theWeapon.GetComponent<WeaponBase>();
     }
 
 

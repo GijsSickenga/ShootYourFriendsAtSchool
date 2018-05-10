@@ -18,6 +18,11 @@ public class PlayerJoinGame : MonoBehaviour
     {
         spawnManager = GetComponentInParent<SpawnManager>();
 
+        for(int i = 0; i < 4; i++)
+        {
+            GameData.players[i] = null;
+        }
+
         StartCoroutine(spawnPlayer());
     }
 
@@ -43,6 +48,7 @@ public class PlayerJoinGame : MonoBehaviour
 
         if (playerInstance == null && ColorTracker.playerActive[(int)playerIndex])
         {
+            FindObjectOfType<WeaponGenerator>().GenerateNewWeapons();
             playerInstance = InitializePlayer();
             SetPlayerStat();
         }
@@ -57,6 +63,8 @@ public class PlayerJoinGame : MonoBehaviour
 
         player.pIndex = playerIndex;
         player.playerIndex = (int)playerIndex;
+
+        GameData.players[player.playerIndex] = player;
 
         Vibration.VibrateForSeconds(0.3f, 0.5f, playerIndex);
         spawnManager.createParticleSystem(aPlayer);
