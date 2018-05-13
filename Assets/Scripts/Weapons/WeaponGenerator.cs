@@ -151,6 +151,11 @@ public class WeaponGenerator : MonoBehaviour
 			// Adjust the total weight left to distribute
 			totalWeight -= weightForValue;
 
+			if (increments > 1000)
+			{
+				Debug.LogError("Something went terribly wrong, leading to far too many loops in CalculateWeaponVariables().");
+				break;
+			}
 			increments++;
 		}
 
