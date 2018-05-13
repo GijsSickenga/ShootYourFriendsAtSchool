@@ -6,7 +6,8 @@ using UnityEngine;
 
 
 public class WeaponGenerator : MonoBehaviour {
-	public static float currentBaseWeaponWeight = 5;
+	public static float currentBaseWeaponWeight = 0;
+	public float weaponWeightIncrease = 5;
 
 	public float refreshWeaponTime = 30;
 	private float refreshWeaponTimer;
@@ -25,8 +26,10 @@ public class WeaponGenerator : MonoBehaviour {
 
 		foreach(VariableWeight var in weaponVariables)
 		{
-			variableDict.Add(var.name, var);
+			variableDict.Add(var.variableName, var);
 		}
+
+		ResetWeaponTimer();
 	}
 	
 	// Update is called once per frame
@@ -42,7 +45,7 @@ public class WeaponGenerator : MonoBehaviour {
 
     public void GenerateNewWeapons()
     {
-		
+		Debug.Log("New weapons generated with weight of: " + currentBaseWeaponWeight);
         foreach(LocalPlayerController player in GameData.players)
 		{
 			if(player != null)
@@ -53,20 +56,29 @@ public class WeaponGenerator : MonoBehaviour {
 				// Generate weapon values
 				CalculateWeaponVariables();
 
+				foreach(VariableWeight var in variableDict.Values)
+				{
+					Debug.Log(var.variableName + ": " + var.currentValue);
+				}
+
 				// Link values to new weapon
-				WeaponBase newWeapon = player.GiveWeapon(basicWeapon);
+				WeaponBase newWeapon = player.defWeapon.GetComponent<WeaponBase>();
 				newWeapon.fireRate = variableDict["FireRate"].LerpWeight();
 				newWeapon.bulletDeviation = variableDict["Deviation"].LerpWeight();
 				newWeapon.bulletAmount = variableDict["BulletsPerShot"].LerpWeightInt();
 
-				player.defWeapon = newWeapon.gameObject;
+				BulletBase newBullet = newWeapon.bulletPrefab.GetComponent<BulletBase>();
+				newBullet.bulletSpeed = variableDict["BulletSpeed"].LerpWeight();
+				newBullet.damage = variableDict["Damage"].LerpWeightInt();
+
+				player.GiveDefaultWeapon();
 
 				newWeapon.ammoAmount = 0;
 				newWeapon.spread = 30;
 			}
 		}
 
-		currentBaseWeaponWeight += 2;
+		currentBaseWeaponWeight += weaponWeightIncrease;
     }
 
 	private void ResetWeaponValues()
@@ -85,13 +97,24 @@ public class WeaponGenerator : MonoBehaviour {
 		// List of remaining values to give weights
 		List<VariableWeight> remainingVariables = variableDict.Values.ToList();
 
-		while(remainingVariables.Count > 0)
+		while(remainingVariables.Count > 0 && totalWeight > 0)
 		{
 			// Get a random value to assign weights to
 			VariableWeight currentVal = remainingVariables.ElementAt(UnityEngine.Random.Range(0, remainingVariables.Count));
 
-			// Assign random weight
-			float weightForValue = UnityEngine.Random.Range(0, totalWeight);
+			float weightForValue;
+
+			// If the weight is too low to distribute with random, just assign the weight left
+			if(totalWeight > 0.3f)
+			{
+				// Assign random weight
+				weightForValue = UnityEngine.Random.Range(0, totalWeight / 2);
+			}
+			else
+			{
+				// Assign left over value
+				weightForValue = totalWeight;
+			}
 
 			// If this is an integer value make sure there is no weights lost (or gained) because of it
 			if(currentVal.isIntegerValue)
@@ -99,17 +122,26 @@ public class WeaponGenerator : MonoBehaviour {
 				weightForValue = Mathf.Round(weightForValue);
 			}
 
-			// Clamp the weight to the max
-			weightForValue = Mathf.Clamp(weightForValue, 0, currentVal.maxedWeight);
-
-			// Adjust the total weight left to distribute
-			totalWeight -= weightForValue;
 
 			// Assign the new weight to the dictionary to link later to the weapon
-			variableDict[currentVal.name].currentValue = weightForValue;
+			currentVal.currentValue += weightForValue;
 
-			// Remove the current selected value from the remaining values
-			remainingVariables.Remove(currentVal);
+			if(currentVal.currentValue > currentVal.maxedWeight)
+			{
+				float difference = currentVal.currentValue - currentVal.maxedWeight;
+				weightForValue -= difference;
+				currentVal.currentValue = currentVal.maxedWeight;
+			}
+
+			// Adjust the total weight left to distribute
+			totalWeight -= weightForValue;			
+
+			// If the current value is maxed out
+			if(weightForValue >= currentVal.maxedWeight)
+			{
+				// Remove the current selected value from the remaining values
+				remainingVariables.Remove(currentVal);
+			}
 		}
 	}
 
