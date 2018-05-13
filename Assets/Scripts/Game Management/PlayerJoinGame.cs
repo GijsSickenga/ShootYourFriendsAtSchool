@@ -49,7 +49,7 @@ public class PlayerJoinGame : MonoBehaviour
         if (playerInstance == null && ColorTracker.playerActive[(int)playerIndex])
         {
             playerInstance = InitializePlayer();
-            SetPlayerStat();
+            //SetPlayerStat(); wesley's tyfus UI
             FindObjectOfType<WeaponGenerator>().GenerateNewWeapons();
         }
     }
