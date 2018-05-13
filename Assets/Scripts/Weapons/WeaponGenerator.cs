@@ -4,36 +4,36 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
-public class WeaponGenerator : MonoBehaviour {
+public class WeaponGenerator : MonoBehaviour
+{
 	public static float currentBaseWeaponWeight = 0;
 	public float weaponWeightIncrease = 5;
 
 	public float refreshWeaponTime = 30;
 	private float refreshWeaponTimer;
 
+	public List<VariableWeight> weaponVariables = new List<VariableWeight>();
 
-	public List<VariableWeight> weaponVariables;
+	// Gun UI parent objects, which contain references to specific UI elements,
+	// in order to adjust gun stats per player.
+	// These have to be in order (0-4) for the gun stats to correspond to the right players.
+	public List<GunUIParent> gunUIParents = new List<GunUIParent>();
 
-	private Dictionary<string, VariableWeight> variableDict;
+    private Dictionary<string, VariableWeight> variableDict = new Dictionary<string, VariableWeight>();
 
-	public GameObject basicWeapon;
-	public GameObject basicBullet;
-
-	// Use this for initialization
-	void Start () {
-		variableDict = new Dictionary<string, VariableWeight>();
-
-		foreach(VariableWeight var in weaponVariables)
-		{
-			variableDict.Add(var.variableName, var);
-		}
+    private void Start()
+    {
+		// Initialize dictionary from list.
+        foreach (VariableWeight var in weaponVariables)
+        {
+            variableDict.Add(var.variableName, var);
+        }
 
 		ResetWeaponTimer();
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 		refreshWeaponTimer -= Time.deltaTime;
 
 		if(refreshWeaponTimer <= 0)
@@ -48,7 +48,7 @@ public class WeaponGenerator : MonoBehaviour {
 		Debug.Log("New weapons generated with weight of: " + currentBaseWeaponWeight);
         foreach(LocalPlayerController player in GameData.players)
 		{
-			if(player != null)
+			if (player != null)
 			{
 				// Player selected
 				ResetWeaponValues();
@@ -56,9 +56,18 @@ public class WeaponGenerator : MonoBehaviour {
 				// Generate weapon values
 				CalculateWeaponVariables();
 
+				// Grab a reference to this player's gun stats UI.
+                GunUIParent gunUI = gunUIParents[player.playerIndex];
+				// Adjust all gun stat values in UI.
 				foreach(VariableWeight var in variableDict.Values)
 				{
-					Debug.Log(var.variableName + ": " + var.currentValue);
+					// Grab the component corresponding to the current type.
+					GunUIComponent component;
+					if (gunUI.components.TryGetValue(var.variableName, out component))
+					{
+						// UI component found, so write the new weight on the UI element.
+                        component.SetWeight(var.currentValue);
+					}
 				}
 
 				// Link values to new weapon
@@ -121,7 +130,6 @@ public class WeaponGenerator : MonoBehaviour {
 			{
 				weightForValue = Mathf.Round(weightForValue);
 			}
-
 
 			// Assign the new weight to the dictionary to link later to the weapon
 			currentVal.currentValue += weightForValue;
