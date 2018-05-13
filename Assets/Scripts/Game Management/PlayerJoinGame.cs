@@ -48,9 +48,9 @@ public class PlayerJoinGame : MonoBehaviour
 
         if (playerInstance == null && ColorTracker.playerActive[(int)playerIndex])
         {
-            FindObjectOfType<WeaponGenerator>().GenerateNewWeapons();
             playerInstance = InitializePlayer();
             SetPlayerStat();
+            FindObjectOfType<WeaponGenerator>().GenerateNewWeapons();
         }
     }
 

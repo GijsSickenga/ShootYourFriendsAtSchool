@@ -54,12 +54,16 @@ public class WeaponGenerator : MonoBehaviour {
 				CalculateWeaponVariables();
 
 				// Link values to new weapon
-				WeaponBase newWeapon = player.GiveWeapon(basicWeapon);
+				WeaponBase newWeapon = player.defWeapon.GetComponent<WeaponBase>();
 				newWeapon.fireRate = variableDict["FireRate"].LerpWeight();
 				newWeapon.bulletDeviation = variableDict["Deviation"].LerpWeight();
 				newWeapon.bulletAmount = variableDict["BulletsPerShot"].LerpWeightInt();
 
-				player.defWeapon = newWeapon.gameObject;
+				BulletBase newBullet = newWeapon.bulletPrefab.GetComponent<BulletBase>();
+				newBullet.damage = variableDict["Damage"].LerpWeightInt();
+				newBullet.bulletSpeed = variableDict["BulletSpeed"].LerpWeight();
+
+				player.GiveDefaultWeapon();
 
 				newWeapon.ammoAmount = 0;
 				newWeapon.spread = 30;
