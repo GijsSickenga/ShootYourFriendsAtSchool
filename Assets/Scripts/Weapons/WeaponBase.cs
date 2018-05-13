@@ -97,10 +97,10 @@ public class WeaponBase : MonoBehaviour {
     protected virtual void Shoot()
     {
         float angle = Random.Range(-bulletDeviation, bulletDeviation);
+        float deltaAngle = spread / (bulletAmount + 1);
 
-        for (int i = 0; i < bulletAmount; i++)
+        for (int i = 1; i <= bulletAmount; i++)
         {
-            float deltaAngle = spread / Mathf.Clamp(((float)bulletAmount - 1), 1, Mathf.Infinity);
             Vector3 rot = bulletSpawn.rotation.eulerAngles;
             rot.z += angle + spread / 2f - (deltaAngle * i);
             GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.Euler(rot)) as GameObject;
