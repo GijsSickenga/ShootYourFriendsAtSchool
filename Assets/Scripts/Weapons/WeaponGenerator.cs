@@ -127,10 +127,10 @@ public class WeaponGenerator : MonoBehaviour
 				weightForValue = totalWeight;
 			}
 
-			// If this is an integer value make sure there is no weights lost (or gained) because of it
+			// If this is an integer value, round to top to prevent getting stuck
 			if(currentVar.isIntegerValue)
 			{
-				weightForValue = Mathf.Round(weightForValue);
+				weightForValue = Mathf.Ceil(weightForValue);
 			}
 
 			// Assign the new weight to the dictionary to link later to the weapon
