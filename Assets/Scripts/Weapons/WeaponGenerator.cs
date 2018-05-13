@@ -105,11 +105,13 @@ public class WeaponGenerator : MonoBehaviour
 
 		// List of remaining values to give weights
 		List<VariableWeight> remainingVariables = variableDict.Values.ToList();
+		int increments = 0;
 
+		// Loop until all variables are maxed out or until totalWeight is depleted
 		while(remainingVariables.Count > 0 && totalWeight > 0)
 		{
 			// Get a random value to assign weights to
-			VariableWeight currentVal = remainingVariables.ElementAt(UnityEngine.Random.Range(0, remainingVariables.Count));
+			VariableWeight currentVar = remainingVariables.ElementAt(UnityEngine.Random.Range(0, remainingVariables.Count));
 
 			float weightForValue;
 
@@ -126,31 +128,33 @@ public class WeaponGenerator : MonoBehaviour
 			}
 
 			// If this is an integer value make sure there is no weights lost (or gained) because of it
-			if(currentVal.isIntegerValue)
+			if(currentVar.isIntegerValue)
 			{
 				weightForValue = Mathf.Round(weightForValue);
 			}
 
 			// Assign the new weight to the dictionary to link later to the weapon
-			currentVal.currentValue += weightForValue;
+			currentVar.currentValue += weightForValue;
 
-			if(currentVal.currentValue > currentVal.maxedWeight)
+			// When the value is higher than its max
+			if(currentVar.currentValue > currentVar.maxedWeight)
 			{
-				float difference = currentVal.currentValue - currentVal.maxedWeight;
+				// Subtract the difference so it can be spend on other variables
+				float difference = currentVar.currentValue - currentVar.maxedWeight;
 				weightForValue -= difference;
-				currentVal.currentValue = currentVal.maxedWeight;
+				// Clamp to max value
+				currentVar.currentValue = currentVar.maxedWeight;
+				// Remove the current selected value from the remaining values so it won't be selected again
+				remainingVariables.Remove(currentVar);
 			}
 
 			// Adjust the total weight left to distribute
-			totalWeight -= weightForValue;			
+			totalWeight -= weightForValue;
 
-			// If the current value is maxed out
-			if(weightForValue >= currentVal.maxedWeight)
-			{
-				// Remove the current selected value from the remaining values
-				remainingVariables.Remove(currentVal);
-			}
+			increments++;
 		}
+
+		Debug.Log("Finished variable distribution after: " + increments + " increments");
 	}
 
     private void ResetWeaponTimer()
