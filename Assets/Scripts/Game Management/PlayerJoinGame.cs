@@ -50,8 +50,10 @@ public class PlayerJoinGame : MonoBehaviour
         {
             playerInstance = InitializePlayer();
             //SetPlayerStat(); wesley's tyfus UI
-            FindObjectOfType<WeaponGenerator>().GenerateNewWeapons();
         }
+
+        yield return new WaitForEndOfFrame();
+        FindObjectOfType<WeaponGenerator>().FirstGenerate();
     }
 
     private GameObject InitializePlayer()

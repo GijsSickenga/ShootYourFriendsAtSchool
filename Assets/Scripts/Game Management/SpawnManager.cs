@@ -57,7 +57,6 @@ public class SpawnManager : MonoBehaviour {
 
         player.SetActive(true);
         player.transform.position = PickRandomRespawn().transform.position;
-        player.GetComponent<LocalPlayerController>().GiveDefaultWeapon();
         Health health = player.GetComponent<Health>();
         health.SetHealth(health.maxHealth);
 

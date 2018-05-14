@@ -43,6 +43,14 @@ public class WeaponBase : MonoBehaviour {
 
     protected GameObject currentPlayer;
 
+    // Weapon variable stuff
+    [HideInInspector]
+    public int bulletDamage;
+    [HideInInspector]
+    public float bulletSpeed;
+    [HideInInspector]
+    public Color bulletColor;
+
     public virtual void Start()
     {
         source = GetComponent<AudioSource>();
@@ -122,8 +130,13 @@ public class WeaponBase : MonoBehaviour {
 
     private void SpawnBullet(GameObject bullet)
     {
-        bullet.GetComponent<BulletBase>().StartMoving();
-        bullet.GetComponent<BulletBase>().playerIndex = currentPlayer.GetComponent<LocalPlayerController>().playerIndex;
+        BulletBase bulletBase = bullet.GetComponent<BulletBase>();
+        bulletBase.bulletSpeed = this.bulletSpeed;
+        bulletBase.GetComponent<SpriteRenderer>().color = bulletColor; 
+        
+        bulletBase.damage = bulletDamage;
+        bulletBase.StartMoving();
+        bulletBase.playerIndex = currentPlayer.GetComponent<LocalPlayerController>().playerIndex;
 
         if (bulletLifetime > 0)
             Destroy(bullet, bulletLifetime);

@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class WeaponGenerator : MonoBehaviour
 {
-	public static float currentBaseWeaponWeight = 0;
+	public float startingWeaponWeight = 0;
+	public float currentBaseWeaponWeight;
 	public float weaponWeightIncrease = 5;
 
 	public float refreshWeaponTime = 30;
@@ -20,9 +21,12 @@ public class WeaponGenerator : MonoBehaviour
 	public List<GunUIParent> gunUIParents = new List<GunUIParent>();
 
     private Dictionary<string, VariableWeight> variableDict = new Dictionary<string, VariableWeight>();
+    private bool hasGeneratedFirst = false;
 
     private void Start()
     {
+		currentBaseWeaponWeight = startingWeaponWeight;
+
 		// Initialize dictionary from list.
         foreach (VariableWeight var in weaponVariables)
         {
@@ -71,19 +75,14 @@ public class WeaponGenerator : MonoBehaviour
 				}
 
 				// Link values to new weapon
-				WeaponBase newWeapon = player.defWeapon.GetComponent<WeaponBase>();
+				WeaponBase newWeapon = player.GiveDefaultWeapon();
 				newWeapon.fireRate = variableDict["FireRate"].LerpWeight();
 				newWeapon.bulletDeviation = variableDict["Deviation"].LerpWeight();
 				newWeapon.bulletAmount = variableDict["BulletsPerShot"].LerpWeightInt();
 
-				BulletBase newBullet = newWeapon.bulletPrefab.GetComponent<BulletBase>();
-				newBullet.bulletSpeed = variableDict["BulletSpeed"].LerpWeight();
-				newBullet.damage = variableDict["Damage"].LerpWeightInt();
-				// Random bullet color.
-				Color randomColor = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1, 1, 1);
-				newBullet.GetComponent<SpriteRenderer>().color = randomColor;
-
-				player.GiveDefaultWeapon();
+				newWeapon.bulletSpeed = variableDict["BulletSpeed"].LerpWeight();
+				newWeapon.bulletDamage = variableDict["Damage"].LerpWeightInt();
+				newWeapon.bulletColor = ColorTracker.colors[player.playerIndex]; 
 
 				newWeapon.ammoAmount = 0;
 				newWeapon.spread = 30;
@@ -92,6 +91,15 @@ public class WeaponGenerator : MonoBehaviour
 
 		currentBaseWeaponWeight += weaponWeightIncrease;
     }
+
+	public void FirstGenerate()
+	{
+		if(!hasGeneratedFirst)
+		{
+			GenerateNewWeapons();
+			hasGeneratedFirst = true;
+		}
+	}
 
 	private void ResetWeaponValues()
 	{

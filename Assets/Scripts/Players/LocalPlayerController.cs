@@ -47,9 +47,7 @@ public class LocalPlayerController : MonoBehaviour {
     private bool hasFired = false;
 
     void Start()
-    {
-        GiveDefaultWeapon();
-        
+    {        
         //Giving player it's info
         animator = playerSprite.GetComponent<Animator>();
         sprite = playerSprite.GetComponent<SpriteRenderer>();
@@ -211,9 +209,9 @@ public class LocalPlayerController : MonoBehaviour {
         return false;
     }
 
-    public void GiveDefaultWeapon()
+    public WeaponBase GiveDefaultWeapon()
     {
-        GiveWeapon(defWeapon);
+        return GiveWeapon(defWeapon);
     }
 
     public WeaponBase GiveWeapon(GameObject weapon)
