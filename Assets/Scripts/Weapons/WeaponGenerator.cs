@@ -79,6 +79,9 @@ public class WeaponGenerator : MonoBehaviour
 				BulletBase newBullet = newWeapon.bulletPrefab.GetComponent<BulletBase>();
 				newBullet.bulletSpeed = variableDict["BulletSpeed"].LerpWeight();
 				newBullet.damage = variableDict["Damage"].LerpWeightInt();
+				// Random bullet color.
+				Color randomColor = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1, 1, 1);
+				newBullet.GetComponent<SpriteRenderer>().color = randomColor;
 
 				player.GiveDefaultWeapon();
 
