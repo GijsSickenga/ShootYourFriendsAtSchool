@@ -13,6 +13,7 @@ public class WeaponGenerator : MonoBehaviour
 	public float refreshWeaponTime = 30;
 	private float refreshWeaponTimer;
 
+
 	public List<VariableWeight> weaponVariables = new List<VariableWeight>();
 
 	// Gun UI parent objects, which contain references to specific UI elements,
@@ -55,6 +56,15 @@ public class WeaponGenerator : MonoBehaviour
 
 		if(refreshWeaponTimer <= 0)
 		{
+			if(WeaponWeightScaler != null)
+				WeaponWeightScaler.CalculateWeights();
+			GenerateNewWeapons();
+			ResetWeaponTimer();
+		}
+
+		if(Input.GetKeyDown(KeyCode.G))
+		{
+			// Debug force generate weapons
 			if(WeaponWeightScaler != null)
 				WeaponWeightScaler.CalculateWeights();
 			GenerateNewWeapons();
@@ -139,7 +149,7 @@ public class WeaponGenerator : MonoBehaviour
 		while(remainingVariables.Count > 0 && totalWeight > 0)
 		{
 			// Get a random value to assign weights to
-			VariableWeight currentVar = remainingVariables.ElementAt(UnityEngine.Random.Range(0, remainingVariables.Count));
+			VariableWeight currentVar = GetBiasedWeaponVariable(remainingVariables);
 
 			float weightForValue;
 
@@ -188,6 +198,45 @@ public class WeaponGenerator : MonoBehaviour
 		}
 
 		Debug.Log("Finished variable distribution after: " + increments + " increments");
+	}
+
+	private VariableWeight GetRandomWeaponVariable(List<VariableWeight> possibleVars)
+	{
+		return possibleVars.ElementAt(UnityEngine.Random.Range(0, possibleVars.Count));
+	}
+
+	private VariableWeight GetBiasedWeaponVariable(List<VariableWeight> possibleVars)
+	{
+		// Plus 1 in order to get from 1 to upper (total). This makes sure distribution is equal
+		int selectedNumber = UnityEngine.Random.Range(0, GetTotalBias(possibleVars)) + 1;
+
+		int currentPassedTotalBias = 0;
+
+		for(int i = 0; i < possibleVars.Count; i++)
+		{
+			currentPassedTotalBias += possibleVars[i].bias;
+
+			if(selectedNumber <= currentPassedTotalBias)
+			{
+				// Found selected variable
+				return possibleVars[i];
+			}
+		}
+
+		Debug.LogError("Something went wrong in bias calculations as it did not find one to select");
+		return null;
+	}
+
+	private int GetTotalBias(List<VariableWeight> possibleVars)
+	{
+		int totalVariableBias = 0;
+
+		foreach(VariableWeight var in possibleVars)
+		{
+			totalVariableBias += var.bias;
+		}
+
+		return totalVariableBias;
 	}
 
     private void ResetWeaponTimer()

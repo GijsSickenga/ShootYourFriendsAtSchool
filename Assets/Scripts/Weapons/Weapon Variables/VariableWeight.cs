@@ -16,6 +16,9 @@ public class VariableWeight : ScriptableObject
 
 	public float maxedWeight;
 
+	// Minimum range in OnValidate
+	public int bias = 1;
+
 	public bool isIntegerValue;
 
 	public float LerpWeight()
@@ -27,5 +30,10 @@ public class VariableWeight : ScriptableObject
 	public int LerpWeightInt()
 	{
 		return Mathf.RoundToInt(LerpWeight());
+	}
+
+	public void OnValidate()
+	{
+		bias = Mathf.Max(bias, 0);
 	}
 }
