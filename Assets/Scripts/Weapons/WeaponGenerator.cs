@@ -13,6 +13,7 @@ public class WeaponGenerator : MonoBehaviour
 	public float refreshWeaponTime = 30;
 	private float refreshWeaponTimer;
 
+
 	public List<VariableWeight> weaponVariables = new List<VariableWeight>();
 
 	// Gun UI parent objects, which contain references to specific UI elements,
@@ -22,6 +23,19 @@ public class WeaponGenerator : MonoBehaviour
 
     private Dictionary<string, VariableWeight> variableDict = new Dictionary<string, VariableWeight>();
     private bool hasGeneratedFirst = false;
+
+	// Get a reference to scaler, so it only needs to be found once
+	private WeaponWeightScaler weaponWeightScalarRef = null;
+	private WeaponWeightScaler WeaponWeightScaler
+	{
+		get
+		{
+			if(weaponWeightScalarRef == null)
+				weaponWeightScalarRef = FindObjectOfType<WeaponWeightScaler>();
+
+			return weaponWeightScalarRef;
+		}
+	}
 
     private void Start()
     {
@@ -42,6 +56,17 @@ public class WeaponGenerator : MonoBehaviour
 
 		if(refreshWeaponTimer <= 0)
 		{
+			if(WeaponWeightScaler != null)
+				WeaponWeightScaler.CalculateWeights();
+			GenerateNewWeapons();
+			ResetWeaponTimer();
+		}
+
+		if(Input.GetKeyDown(KeyCode.G))
+		{
+			// Debug force generate weapons
+			if(WeaponWeightScaler != null)
+				WeaponWeightScaler.CalculateWeights();
 			GenerateNewWeapons();
 			ResetWeaponTimer();
 		}
@@ -58,7 +83,7 @@ public class WeaponGenerator : MonoBehaviour
 				ResetWeaponValues();
 
 				// Generate weapon values
-				CalculateWeaponVariables();
+				CalculateWeaponVariables(player);
 
 				// Grab a reference to this player's gun stats UI.
                 GunUIParent gunUI = gunUIParents[player.playerIndex];
@@ -109,10 +134,12 @@ public class WeaponGenerator : MonoBehaviour
 		}
 	}
 
-	private void CalculateWeaponVariables()
+	private void CalculateWeaponVariables(LocalPlayerController player)
 	{
 		// Total weight to distribute at the start of generating weapons
-		float totalWeight = currentBaseWeaponWeight;
+		float totalWeight = currentBaseWeaponWeight * player.weaponWeightScalar;
+
+		Debug.Log("Player #" + player.playerIndex + " - Weight: " + totalWeight);
 
 		// List of remaining values to give weights
 		List<VariableWeight> remainingVariables = variableDict.Values.ToList();
@@ -122,7 +149,7 @@ public class WeaponGenerator : MonoBehaviour
 		while(remainingVariables.Count > 0 && totalWeight > 0)
 		{
 			// Get a random value to assign weights to
-			VariableWeight currentVar = remainingVariables.ElementAt(UnityEngine.Random.Range(0, remainingVariables.Count));
+			VariableWeight currentVar = GetBiasedWeaponVariable(remainingVariables);
 
 			float weightForValue;
 
@@ -171,6 +198,45 @@ public class WeaponGenerator : MonoBehaviour
 		}
 
 		Debug.Log("Finished variable distribution after: " + increments + " increments");
+	}
+
+	private VariableWeight GetRandomWeaponVariable(List<VariableWeight> possibleVars)
+	{
+		return possibleVars.ElementAt(UnityEngine.Random.Range(0, possibleVars.Count));
+	}
+
+	private VariableWeight GetBiasedWeaponVariable(List<VariableWeight> possibleVars)
+	{
+		// Plus 1 in order to get from 1 to upper (total). This makes sure distribution is equal
+		int selectedNumber = UnityEngine.Random.Range(0, GetTotalBias(possibleVars)) + 1;
+
+		int currentPassedTotalBias = 0;
+
+		for(int i = 0; i < possibleVars.Count; i++)
+		{
+			currentPassedTotalBias += possibleVars[i].bias;
+
+			if(selectedNumber <= currentPassedTotalBias)
+			{
+				// Found selected variable
+				return possibleVars[i];
+			}
+		}
+
+		Debug.LogError("Something went wrong in bias calculations as it did not find one to select");
+		return null;
+	}
+
+	private int GetTotalBias(List<VariableWeight> possibleVars)
+	{
+		int totalVariableBias = 0;
+
+		foreach(VariableWeight var in possibleVars)
+		{
+			totalVariableBias += var.bias;
+		}
+
+		return totalVariableBias;
 	}
 
     private void ResetWeaponTimer()

@@ -810,18 +810,18 @@ MonoBehaviour:
     m_ExpandedInstanceIDs: e62100000226000000260000f2210000f4210000f6210000fe21000058e9ffff302200004a220000c02300000c22000090220000ba25000044260000703a00000023000034260000222200004a2300006e230000f07b0000ec270000b2440000ba2700003e2300003a230000000000000e2a00009a2700008c280000ac260000c2270000f22800001a260000b2a10000740f0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: Damage
+      m_OriginalName: Damage
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 2726
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 13}
     m_CreateAssetUtility:

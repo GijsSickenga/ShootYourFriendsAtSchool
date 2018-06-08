@@ -6,6 +6,9 @@ public class LocalPlayerController : MonoBehaviour {
     //Player movement speed
     public float speed = 5f;
 
+    // Weapon weight scalar
+    public float weaponWeightScalar = 1f;
+
     //offset of the weapon to the middle of the player
     public Vector3 weaponOffset = new Vector3(0.10f, 0.0f, 0);
 
