@@ -12,7 +12,7 @@ public class GunUITest : MonoBehaviour
 		{
 			foreach (GunUIComponent component in parent.components.Values)
 			{
-				component.SetWeight(Random.Range(0, component.GetWeaponVariableType().maxedWeight));
+				component.SetWeight(Random.Range(0, component.GetWeightedVariableType().maxedWeight));
 			}
 		}
 	}

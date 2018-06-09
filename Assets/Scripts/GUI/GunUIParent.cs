@@ -10,6 +10,10 @@ public class GunUIParent : MonoBehaviour
     [SerializeField]
     private List<GunUIComponent> componentsList = new List<GunUIComponent>();
 
+    // The player id associated with this UI group.
+    [SerializeField]
+    private int playerID;
+
     /// <summary>
     /// A dictionary containing all gun UI components with their
     /// corresponding gun variable types.
@@ -22,9 +26,12 @@ public class GunUIParent : MonoBehaviour
     {
         foreach (GunUIComponent component in componentsList)
         {
-            // Add the component to the dictionary, along with its weapon
+            // Initialize slider color by player ID.
+            component.SetSliderColor(playerID);
+
+            // Add the component to the dictionary, along with its weighted
             // variable type as its ID.
-            components.Add(component.GetWeaponVariableType().variableName, component);
+            components.Add(component.GetWeightedVariableType().variableName, component);
         }
     }
 }
