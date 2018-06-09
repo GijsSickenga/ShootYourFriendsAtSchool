@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class SniperWeapon : WeaponBase {
-    public int bulletDamage;
+    //public int bulletDamage;
     private LineRenderer lineRenderer;
     public float maxShowLineTime = 0.5f;
     private float showLineTime;
