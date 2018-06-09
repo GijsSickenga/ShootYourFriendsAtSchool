@@ -78,9 +78,9 @@ public class WeaponWeightScaler : MonoBehaviour {
 
 	private float CalculateKillRatioScale(float playerKills, float totalKills)
 	{
-		// If no kills were made, return maximum scale
+		// If no kills were made, make sure we don't divide by zero
 		if(playerKills <= 0)
-			return maxScale;
+			playerKills++;
 
 		// Inverse the percentage of kills player has in context of total number of kills,
 		// then multiply that by the maximum scale and add the minimum scale.
@@ -90,12 +90,12 @@ public class WeaponWeightScaler : MonoBehaviour {
 
 	private float CalculateKillDeathScale(float kills, float deaths)
 	{
-		// If no kills, return maximum scale
+		// If no kills, add something to not divide by zero
 		if (kills <= 0)
-			return maxScale;
-		// If no deaths, return minimum scale
+			kills++;
+		// If no deaths, add something to not divide by zero
 		else if (deaths <= 0)
-			return 0 + minScale;
+			deaths++;
 
 		// Inverse K/D ratio, then multiply by maxScale and add minScale. 
 		// Get lower scale for higher K/D ratio.
