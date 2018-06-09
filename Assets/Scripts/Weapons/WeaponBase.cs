@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WeaponBase : MonoBehaviour {
+public class WeaponBase : MonoBehaviour
+{
     //Time between bullets in seconds
     public float fireRate;
     protected float fireInterval = 0;
@@ -111,20 +112,25 @@ public class WeaponBase : MonoBehaviour {
         {
             Vector3 rot = bulletSpawn.rotation.eulerAngles;
             rot.z += angle + spread / 2f - (deltaAngle * i);
-            GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.Euler(rot)) as GameObject;
 
-            // Check if the assigned bullet is a bullet itself or a bullet container
-            if (bullet.GetComponent<BulletBase>() == null)
-            {
-                foreach (BulletBase childBullet in bullet.GetComponentsInChildren<BulletBase>())
-                {
-                    SpawnBullet(childBullet.gameObject);
-                }
-            }
-            else
-            {
-                SpawnBullet(bullet);
-            }
+
+
+            ////////// OLD SPAWN CODE //////////
+
+            // GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.Euler(rot)) as GameObject;
+
+            // // Check if the assigned bullet is a bullet itself or a bullet container
+            // if (bullet.GetComponent<BulletBase>() == null)
+            // {
+            //     foreach (BulletBase childBullet in bullet.GetComponentsInChildren<BulletBase>())
+            //     {
+            //         SpawnBullet(childBullet.gameObject);
+            //     }
+            // }
+            // else
+            // {
+            //     SpawnBullet(bullet);
+            // }
         }
     }
 

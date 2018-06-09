@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [System.Serializable]
-[CreateAssetMenu(fileName = "New Weapon Variable", menuName = "Weapon Variable")]
+[CreateAssetMenu(fileName = "New Weighted Variable", menuName = "Weighted Variable")]
 public class VariableWeight : ScriptableObject
 {
 	public string variableName;
