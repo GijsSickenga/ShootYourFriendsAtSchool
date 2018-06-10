@@ -26,6 +26,10 @@ public class GunUIComponent : MonoBehaviour
     [SerializeField]
     private Image sliderFill;
 
+    // The threshold indicator of the slider.
+    [SerializeField]
+    private Image thresholdIndicator;
+
 	[SerializeField]
 	private VariableWeight weightedVariableType;
     /// <summary>
@@ -84,11 +88,41 @@ public class GunUIComponent : MonoBehaviour
 	// Update UI elements.
 	private void OnValidate()
 	{
-		// Set names to weighted variable name if it's set.
+		// Adjust some UI elements if variable type is set.
 		if (weightedVariableType != null)
         {
+            // Set names to weighted variable name.
             GetComponent<Text>().text = weightedVariableType.variableName + ":";
             name = weightedVariableType.variableName;
+
+            // Make sure threshold marker is not null before checking if we want to
+            // do anything with it.
+            if (thresholdIndicator != null)
+            {
+                // If this is a behaviour, set the threshold marker.
+                if (weightedVariableType.GetType() == typeof(BehaviourWeight))
+                {
+                    // Show threshold indicator.
+                    thresholdIndicator.gameObject.SetActive(true);
+
+                    // Cast to BehaviourWeight so we can grab threshold value.
+                    BehaviourWeight behaviourType = ((BehaviourWeight)weightedVariableType);
+
+                    // Calculate threshold indicator position (from 0 to 1).
+                    float indicatorXCoord = behaviourType.thresholdWeight / behaviourType.maxedWeight;
+                    // Place slider at correct position.
+                    thresholdIndicator.rectTransform.anchoredPosition = new Vector2
+                    (
+                        indicatorXCoord,
+                        thresholdIndicator.rectTransform.anchoredPosition.y
+                    );
+                }
+                else
+                {
+                    // Not a behaviour, so hide threshold indicator.
+                    thresholdIndicator.gameObject.SetActive(false);
+                }
+            }
 		}
 	}
 }

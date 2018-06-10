@@ -4,6 +4,12 @@
 [CreateAssetMenu(fileName = "New Weighted Behaviour", menuName = "Weighted Behaviour")]
 public class BehaviourWeight : VariableWeight
 {
+	/// <summary>
+	/// Whether the behaviour has been enqueued yet.
+	/// </summary>
+	[HideInInspector]
+	public bool enqueued;
+
 	[Tooltip("The weight required to activate this behaviour.")]
 	public float thresholdWeight;
 

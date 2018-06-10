@@ -2,8 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Specifies a weapon behaviour.
+/// Behaviours can be linked in a chain.
+/// Each behaviour has references to the previous and next behaviour in the chain,
+/// which are null if there is no behaviour before or after it.
+/// </summary>
+[System.Serializable]
 public abstract class WeaponBehaviour : ScriptableObject
 {
+	/// <summary>
+	/// A struct containing weapon stats relevant to behaviours.
+	/// </summary>
 	public struct WeaponStats
 	{
 		public WeaponStats(float projectileSpeed, int projectileDamage, Color projectileColor)
@@ -18,33 +28,57 @@ public abstract class WeaponBehaviour : ScriptableObject
 		Color projectileColor;
 	}
 
-	public WeaponBehaviour(int playerID, float weight, WeaponBehaviour previousBehaviour, WeaponBehaviour nextBehaviour)
+    /// <summary>
+    /// Initializes the behaviour.
+	/// Call in recursive function to initialize a behaviour chain.
+    /// </summary>
+    /// <param name="playerID">ID of the player holding the weapon this behaviour will be attached to.</param>
+    /// <param name="behaviourSettings">The settings for this.</param>
+    /// <param name="nextBehaviour">The next behaviour in the behaviour chain.</param>
+    public WeaponBehaviour(int playerID, BehaviourWeight behaviourSettings, WeaponBehaviour nextBehaviour)
 	{
 		_playerID = playerID;
-        _weight = weight;
-        _previousBehaviour = previousBehaviour;
+        _behaviourSettings = behaviourSettings;
 		_nextBehaviour = nextBehaviour;
-	}
 
-	private int _playerID;
-	public int PlayerID
-	{
-		get
+		// Finish initialization by passing this behaviour to the next one in the chain.
+		if (_nextBehaviour != null)
 		{
-			return _playerID;
+			_nextBehaviour._previousBehaviour = this;
 		}
-	}
+    }
 
-	private float _weight;
-	public float Weight
-	{
-		get
-		{
-			return _weight;
-		}
-	}
+    private int _playerID;
+    private BehaviourWeight _behaviourSettings;
+    private WeaponBehaviour _previousBehaviour;
+    private WeaponBehaviour _nextBehaviour;
+    private WeaponStats _stats;
+	
+	/// <summary>
+	/// The ID of the player that is holding the weapon this behaviour is attached to.
+	/// </summary>
+	public int PlayerID { get { return _playerID; } }
 
-	private WeaponStats _stats;
+	/// <summary>
+	/// The settings assigned to this behaviour.
+	/// </summary>
+	public BehaviourWeight Settings { get { return _behaviourSettings; } }
+
+    /// <summary>
+    /// The previous behaviour in the behaviour chain.
+    /// </summary>
+    public WeaponBehaviour PreviousBehaviour { get { return _previousBehaviour; } }
+
+    /// <summary>
+    /// The next behaviour in the behaviour chain.
+    /// </summary>
+    public WeaponBehaviour NextBehaviour { get { return _nextBehaviour; } }
+
+    /// <summary>
+    /// Contains relevant stats of the weapon this behaviour is attached to.
+	/// Setting this property on the first behaviour propagates the stats
+	/// through the behaviour chain.
+    /// </summary>
     public WeaponStats Stats
     {
         get
@@ -61,24 +95,6 @@ public abstract class WeaponBehaviour : ScriptableObject
                 _nextBehaviour.Stats = value;
 			}
 		}
-    }
-
-	// Surrounding behaviours in the behaviour chain.
-    private WeaponBehaviour _previousBehaviour;
-	public WeaponBehaviour PreviousBehaviour
-	{
-		get
-		{
-			return _previousBehaviour;
-		}
-	}
-	private WeaponBehaviour _nextBehaviour;
-    public WeaponBehaviour NextBehaviour
-    {
-        get
-        {
-            return _nextBehaviour;
-        }
     }
 
 	/// <summary>

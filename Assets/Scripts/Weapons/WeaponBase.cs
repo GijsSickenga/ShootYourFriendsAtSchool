@@ -44,10 +44,23 @@ public class WeaponBase : MonoBehaviour
 
     protected GameObject currentPlayer;
 
+    private WeaponBehaviour _shootingBehaviour;
     /// <summary>
     /// The shooting behaviour for this weapon.
     /// </summary>
-    public WeaponBehaviour shootingBehaviour;
+    public WeaponBehaviour ShootingBehaviour
+    {
+        get
+        {
+            return _shootingBehaviour;
+        }
+
+        set
+        {
+            _shootingBehaviour = value;
+            _shootingBehaviour.Stats = new WeaponBehaviour.WeaponStats(bulletSpeed, bulletDamage, bulletColor);
+        }
+    }
 
     // Weapon variable stuff
     [HideInInspector]
@@ -119,7 +132,7 @@ public class WeaponBase : MonoBehaviour
             rot.z += angle + spread / 2f - (deltaAngle * i);
 
             // Execute shooting behaviour.
-            shootingBehaviour.Execute(bulletSpawn.position, Quaternion.Euler(rot));
+            _shootingBehaviour.Execute(bulletSpawn.position, Quaternion.Euler(rot));
 
             ////////// OLD SPAWN CODE //////////
 
