@@ -9,12 +9,12 @@ public class DefaultBehaviour : WeaponBehaviour
     {
     }
 
-    public override void Execute(Vector3 startPosition, Quaternion startRotation)
+    public override void Activate(Vector3 startPosition, Quaternion startRotation)
     {
         Debug.Log(Settings.variableName + " executed...");
         if (NextBehaviour != null)
         {
-            NextBehaviour.Execute(startPosition, startRotation);
+            NextBehaviour.Activate(startPosition, startRotation);
         }
     }
 }

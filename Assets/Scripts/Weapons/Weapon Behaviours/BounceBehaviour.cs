@@ -9,12 +9,12 @@ public class BounceBehaviour : WeaponBehaviour
     {
     }
 
-    public override void Execute(Vector3 startPosition, Quaternion startRotation)
+    public override void Activate(Vector3 startPosition, Quaternion startRotation)
     {
         Debug.Log(Settings.variableName + " executed with value: " + Settings.LerpWeightInt());
         if (NextBehaviour != null)
         {
-            NextBehaviour.Execute(startPosition, startRotation);
+            NextBehaviour.Activate(startPosition, startRotation);
         }
     }
 }

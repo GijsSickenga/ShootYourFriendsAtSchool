@@ -132,7 +132,7 @@ public class WeaponBase : MonoBehaviour
             rot.z += angle + spread / 2f - (deltaAngle * i);
 
             // Execute shooting behaviour.
-            _shootingBehaviour.Execute(bulletSpawn.position, Quaternion.Euler(rot));
+            _shootingBehaviour.Activate(bulletSpawn.position, Quaternion.Euler(rot));
 
             ////////// OLD SPAWN CODE //////////
 

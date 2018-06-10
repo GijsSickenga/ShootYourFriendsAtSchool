@@ -100,5 +100,5 @@ public abstract class WeaponBehaviour : ScriptableObject
 	/// <summary>
 	/// Implement specific behaviour in subclass.
 	/// </summary>
-	public abstract void Execute(Vector3 startPosition, Quaternion startRotation);
+	public abstract void Activate(Vector3 startPosition, Quaternion startRotation);
 }
