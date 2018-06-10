@@ -5,6 +5,11 @@
 public class VariableWeight : ScriptableObject
 {
 	public string variableName;
+
+    public bool isIntegerValue;
+
+	// Minimum range in OnValidate
+	public int bias = 1;
 	
 	[HideInInspector]
 	public float currentValue;
@@ -14,12 +19,7 @@ public class VariableWeight : ScriptableObject
 
 	public float maxedWeight;
 
-	// Minimum range in OnValidate
-	public int bias = 1;
-
-	public bool isIntegerValue;
-
-	public float LerpWeight()
+	public virtual float LerpWeight()
 	{
 		// Lerp between the possible values based on the weight opposed to the max weight.
 		return Mathf.Lerp(worstValue, bestValue, currentValue / maxedWeight);

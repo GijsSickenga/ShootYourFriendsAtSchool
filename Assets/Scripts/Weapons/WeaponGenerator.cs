@@ -46,6 +46,12 @@ public class WeaponGenerator : MonoBehaviour
 		}
 	}
 
+	private void Awake()
+	{
+		// Activate gun UI for all joined players.
+        InitializeGunUI();
+	}
+
     private void Start()
     {
 		currentBaseWeaponWeight = startingWeaponWeight;
@@ -63,26 +69,59 @@ public class WeaponGenerator : MonoBehaviour
 
 		ResetWeaponTimer();
 	}
+
+	private void InitializeGunUI()
+	{
+        // Loop over all gun UI parent objects.
+        foreach (GunUIParent parent in gunUIParents)
+        {
+			// Only show and initialize UI for players in the match.
+			if (GameData.players[parent.GetPlayerID()] != null)
+			{
+				// Unhide UI.
+				parent.gameObject.SetActive(true);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Updates the gun UI of the player with the specified ID.
+	/// </summary>
+	/// <param name="playerID">The ID of the player to update the gun UI for.</param>
+	private void UpdateGunUI(int playerID)
+	{
+        // Grab a reference to the player's gun stats UI.
+        GunUIParent gunUI = gunUIParents[playerID];
+        // Adjust all variable sliders.
+        foreach (VariableWeight var in weaponVariableDict.Values)
+        {
+            // Grab the component corresponding to the current type.
+            GunUIComponent component;
+            if (gunUI.components.TryGetValue(var.variableName, out component))
+            {
+                // UI component found, so write the new weight on the UI element.
+                component.SetWeight(var.currentValue);
+            }
+        }
+	}
 	
 	private void Update()
 	{
 		refreshWeaponTimer -= Time.deltaTime;
 
-		if(refreshWeaponTimer <= 0)
+		if (refreshWeaponTimer <= 0)
 		{
 			if(WeaponWeightScaler != null)
 				WeaponWeightScaler.CalculateWeights();
             NewWeaponGeneration();
-			ResetWeaponTimer();
 		}
 
-		if(Input.GetKeyDown(KeyCode.G))
+		if (Input.GetKeyDown(KeyCode.G))
 		{
 			// Debug force generate weapons
 			if(WeaponWeightScaler != null)
 				WeaponWeightScaler.CalculateWeights();
             NewWeaponGeneration();
-			ResetWeaponTimer();
 		}
 	}
 
@@ -93,6 +132,7 @@ public class WeaponGenerator : MonoBehaviour
 	{
 		GenerateNewBehaviours();
 		GenerateNewWeapons();
+        ResetWeaponTimer();
         currentBaseWeaponWeight += weaponWeightIncrease;
 	}
 
@@ -103,48 +143,25 @@ public class WeaponGenerator : MonoBehaviour
         {
             if (player != null)
             {
-                // Player selected
+				// TODO (Gijs): Move all this to a recursive behaviour gen function,
+				// and set weapon.behaviour to the returned behaviour chain.
+
+				// Reset values prior to generating new ones.
                 ResetValues(weaponBehaviourDict);
 
-                // Generate weapon values
+                // Generate behaviour values
                 CalculateWeaponBehaviours(player);
-
-                // Grab a reference to this player's gun stats UI.
-                GunUIParent gunUI = gunUIParents[player.playerIndex];
-                // Adjust all gun stat values in UI.
-                foreach (VariableWeight var in weaponVariableDict.Values)
-                {
-                    // Grab the component corresponding to the current type.
-                    GunUIComponent component;
-                    if (gunUI.components.TryGetValue(var.variableName, out component))
-                    {
-                        // UI component found, so write the new weight on the UI element.
-                        component.SetWeight(var.currentValue);
-                    }
-                }
 
                 // Link values to new weapon
                 WeaponBase newWeapon = player.GiveDefaultWeapon();
-                newWeapon.fireRate = weaponVariableDict["FireRate"].LerpWeight();
-                newWeapon.bulletDeviation = weaponVariableDict["Deviation"].LerpWeight();
-                newWeapon.bulletAmount = weaponVariableDict["BulletsPerShot"].LerpWeightInt();
-
-                newWeapon.bulletSpeed = weaponVariableDict["BulletSpeed"].LerpWeight();
-                newWeapon.bulletDamage = weaponVariableDict["Damage"].LerpWeightInt();
-                newWeapon.bulletColor = ColorTracker.colors[player.playerIndex];
-
-                newWeapon.ammoAmount = 0;
-                newWeapon.spread = 30;
             }
         }
-
-        currentBaseWeaponWeight += weaponWeightIncrease;
 	}
 
     public void GenerateNewWeapons()
     {
 		Debug.Log("New weapons generated with weight of: " + currentBaseWeaponWeight);
-        foreach(LocalPlayerController player in GameData.players)
+        foreach (LocalPlayerController player in GameData.players)
 		{
 			if (player != null)
 			{
@@ -154,19 +171,8 @@ public class WeaponGenerator : MonoBehaviour
 				// Generate weapon values
 				CalculateWeaponVariables(player);
 
-				// Grab a reference to this player's gun stats UI.
-                GunUIParent gunUI = gunUIParents[player.playerIndex];
-				// Adjust all gun stat values in UI.
-				foreach(VariableWeight var in weaponVariableDict.Values)
-				{
-					// Grab the component corresponding to the current type.
-					GunUIComponent component;
-					if (gunUI.components.TryGetValue(var.variableName, out component))
-					{
-						// UI component found, so write the new weight on the UI element.
-                        component.SetWeight(var.currentValue);
-					}
-				}
+				// Update gun UI for current player to new weapon values.
+				UpdateGunUI(player.playerIndex);
 
 				// Link values to new weapon
 				WeaponBase newWeapon = player.GiveDefaultWeapon();
@@ -182,13 +188,11 @@ public class WeaponGenerator : MonoBehaviour
 				newWeapon.spread = 30;
 			}
 		}
-
-		currentBaseWeaponWeight += weaponWeightIncrease;
     }
 
 	public void FirstGenerate()
 	{
-		if(!hasGeneratedFirst)
+		if (!hasGeneratedFirst)
         {
             GenerateNewBehaviours();
 			GenerateNewWeapons();
@@ -198,7 +202,7 @@ public class WeaponGenerator : MonoBehaviour
 
 	private void ResetValues(Dictionary<string, VariableWeight> variableWeights)
 	{
-		foreach(KeyValuePair<string, VariableWeight> pair in variableWeights)
+		foreach (KeyValuePair<string, VariableWeight> pair in variableWeights)
 		{
 			pair.Value.currentValue = 0;
 		}
@@ -282,7 +286,7 @@ public class WeaponGenerator : MonoBehaviour
 		int increments = 0;
 
 		// Loop until all variables are maxed out or until totalWeight is depleted
-		while(remainingVariables.Count > 0 && totalWeight > 0)
+		while (remainingVariables.Count > 0 && totalWeight > 0)
 		{
 			// Get a random value to assign weights to
 			VariableWeight currentVar = GetBiasedVariable(remainingVariables);
@@ -348,11 +352,11 @@ public class WeaponGenerator : MonoBehaviour
 
 		int currentPassedTotalBias = 0;
 
-		for(int i = 0; i < possibleVars.Count; i++)
+		for (int i = 0; i < possibleVars.Count; i++)
 		{
 			currentPassedTotalBias += possibleVars[i].bias;
 
-			if(selectedNumber <= currentPassedTotalBias)
+			if (selectedNumber <= currentPassedTotalBias)
 			{
 				// Found selected variable
 				return possibleVars[i];
@@ -367,7 +371,7 @@ public class WeaponGenerator : MonoBehaviour
 	{
 		int totalVariableBias = 0;
 
-		foreach(VariableWeight var in possibleVars)
+		foreach (VariableWeight var in possibleVars)
 		{
 			totalVariableBias += var.bias;
 		}

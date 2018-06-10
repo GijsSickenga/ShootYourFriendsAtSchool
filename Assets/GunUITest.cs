@@ -8,11 +8,20 @@ public class GunUITest : MonoBehaviour
 
 	private void Start()
 	{
+		// Loop over all gun UI parent objects.
 		foreach (GunUIParent parent in gunUIParents)
 		{
-			foreach (GunUIComponent component in parent.components.Values)
-			{
-				component.SetWeight(Random.Range(0, component.GetWeightedVariableType().maxedWeight));
+			// Only show and initialize UI for players in the match.
+			if (GameData.players[parent.GetPlayerID()] != null)
+            {
+				// Unhide UI.
+				parent.gameObject.SetActive(true);
+
+				// Initialize all sliders.
+                foreach (GunUIComponent component in parent.components.Values)
+                {
+                    component.SetWeight(Random.Range(0, component.GetWeightedVariableType().maxedWeight));
+                }
 			}
 		}
 	}

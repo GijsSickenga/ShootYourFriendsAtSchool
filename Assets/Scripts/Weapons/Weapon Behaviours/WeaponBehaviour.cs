@@ -2,23 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class WeaponBehaviour
+public abstract class WeaponBehaviour : ScriptableObject
 {
 	public struct WeaponStats
 	{
-		float bulletSpeed;
-		int bulletDamage;
-		Color bulletColor;
+		public WeaponStats(float projectileSpeed, int projectileDamage, Color projectileColor)
+        {
+            this.projectileSpeed = projectileSpeed;
+            this.projectileDamage = projectileDamage;
+            this.projectileColor = projectileColor;
+		}
+
+		float projectileSpeed;
+		int projectileDamage;
+		Color projectileColor;
 	}
 
-	public WeaponBehaviour(float weight, WeaponStats stats, WeaponBehaviour nextBehaviour)
+	public WeaponBehaviour(int playerID, float weight, WeaponBehaviour previousBehaviour, WeaponBehaviour nextBehaviour)
 	{
+		_playerID = playerID;
         _weight = weight;
-		_stats = stats;
+        _previousBehaviour = previousBehaviour;
 		_nextBehaviour = nextBehaviour;
 	}
 
-	protected float _weight;
+	private int _playerID;
+	public int PlayerID
+	{
+		get
+		{
+			return _playerID;
+		}
+	}
+
+	private float _weight;
 	public float Weight
 	{
 		get
@@ -27,19 +44,45 @@ public abstract class WeaponBehaviour
 		}
 	}
 
-	protected WeaponStats _stats;
+	private WeaponStats _stats;
     public WeaponStats Stats
     {
         get
         {
             return _stats;
         }
+		
+		set
+		{
+			_stats = value;
+			if (_nextBehaviour != null)
+            {
+                // Propagate weapon stats through the behaviour chain.
+                _nextBehaviour.Stats = value;
+			}
+		}
     }
 
-	protected WeaponBehaviour _nextBehaviour;
+	// Surrounding behaviours in the behaviour chain.
+    private WeaponBehaviour _previousBehaviour;
+	public WeaponBehaviour PreviousBehaviour
+	{
+		get
+		{
+			return _previousBehaviour;
+		}
+	}
+	private WeaponBehaviour _nextBehaviour;
+    public WeaponBehaviour NextBehaviour
+    {
+        get
+        {
+            return _nextBehaviour;
+        }
+    }
 
 	/// <summary>
 	/// Implement specific behaviour in subclass.
 	/// </summary>
-	public abstract void Execute(WeaponBehaviour previousBehaviour);
+	public abstract void Execute(Vector3 startPosition, Quaternion startRotation);
 }

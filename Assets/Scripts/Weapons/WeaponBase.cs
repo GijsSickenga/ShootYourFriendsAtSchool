@@ -21,7 +21,7 @@ public class WeaponBase : MonoBehaviour
     public float spread;
 
     // The amount bullets deviate from where the player is aiming
-    [Tooltip("The amount bullets deviate from where the player is aiming in Degrees")]
+    [Tooltip("The amount bullets deviate from where the player is aiming in degrees")]
     public float bulletDeviation;
 
     // The maximum time in seconds the bullet will live after shot. 0 is infinite
@@ -43,6 +43,11 @@ public class WeaponBase : MonoBehaviour
     private ReloadBar reloadBar;
 
     protected GameObject currentPlayer;
+
+    /// <summary>
+    /// The shooting behaviour for this weapon.
+    /// </summary>
+    public WeaponBehaviour shootingBehaviour;
 
     // Weapon variable stuff
     [HideInInspector]
@@ -113,7 +118,8 @@ public class WeaponBase : MonoBehaviour
             Vector3 rot = bulletSpawn.rotation.eulerAngles;
             rot.z += angle + spread / 2f - (deltaAngle * i);
 
-
+            // Execute shooting behaviour.
+            shootingBehaviour.Execute(bulletSpawn.position, Quaternion.Euler(rot));
 
             ////////// OLD SPAWN CODE //////////
 

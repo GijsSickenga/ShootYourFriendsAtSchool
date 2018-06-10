@@ -19,6 +19,12 @@ public class GunUIComponent : MonoBehaviour
     // The slider that shows how much of the max weight is put into the component.
 	[SerializeField]
     private Slider slider;
+    // The background image of the slider.
+    [SerializeField]
+    private Image sliderBackground;
+    // The fill image of the slider.
+    [SerializeField]
+    private Image sliderFill;
 
 	[SerializeField]
 	private VariableWeight weightedVariableType;
@@ -30,19 +36,32 @@ public class GunUIComponent : MonoBehaviour
 		return weightedVariableType;
 	}
 
-	/// <summary>
-	/// Sets the slider color to the color of the player corresponding to the given ID.
-	/// </summary>
-	/// <param name="playerID">The ID of the player to grab the color from.</param>
-	public void SetSliderColor(int playerID)
-	{
-		//slider.colors.normalColor = ColorTracker.colors[playerID];
-	}
+    public void SetSliderBackgroundColor(Color newColor)
+    {
+        sliderBackground.color = newColor;
+    }
 
-	// Initialization.
-	private void Start()
+    public void SetSliderFillColor(Color newColor)
+    {
+        sliderFill.color = newColor;
+    }
+
+	/// <summary>
+	/// Sets the slider to the given color.
+	/// </summary>
+	/// <param name="fillColor">The color to set the slider to.</param>
+	public void SetSliderColor(Color fillColor)
 	{
-		slider.maxValue = weightedVariableType.maxedWeight;
+		SetSliderFillColor(fillColor);
+
+		// Make slider background a darker shade of fill color.
+        Color backgroundColor = new Color
+        (
+            fillColor.r * 0.25f,
+            fillColor.g * 0.25f,
+            fillColor.b * 0.25f
+        );
+		SetSliderBackgroundColor(backgroundColor);
 	}
 
 	/// <summary>
@@ -54,6 +73,12 @@ public class GunUIComponent : MonoBehaviour
 		// Set weight text and slider value.
         weightText.text = newWeight.ToString("0.0") + "/" + weightedVariableType.maxedWeight.ToString("0.0");
 		slider.value = newWeight;
+    }
+
+    // Initialization.
+    private void Start()
+    {
+        slider.maxValue = weightedVariableType.maxedWeight;
     }
 
 	// Update UI elements.
