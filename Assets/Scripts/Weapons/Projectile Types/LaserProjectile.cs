@@ -15,7 +15,7 @@ public class LaserProjectile : BehaviourProjectile
     }
     public void Activate()
     {
-        //width = BehaviourSettings.LerpWeight();
+        width = BehaviourSettings.LerpWeight();
         
         // Calculate where to make three raycasts (startposition with direction)
         // Make 3 raycasts (left, right, center)
@@ -29,28 +29,23 @@ public class LaserProjectile : BehaviourProjectile
         if(centerCast)
         {
             RaycastHit2D hit = centerCast;
-            switch(hit.collider.tag)
+            if(hit.collider.tag == "Untagged")
             {
-                case "untagged":
-                    // untagged is the thin walls. Break out of loop, maybe particles at position?
-                    // From this wall we want to bounce
-                    endCollider = hit.collider;
-                    break;
-                
-                case "Player":
-                case "BreakableWall":
-                    LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
-                    if(playerController)
-                        if(playerController.playerIndex == PlayerID)
-                            break;
-                        
+                endCollider = hit.collider;
+            }
+            else if(hit.collider.tag == "Player")
+            {
+                LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
+                if(playerController.playerIndex != PlayerID)
+                {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
-                    break;
-                
-                default:
-                    // ignore if none of the above
-                    break;
+                }
+            }
+            else if(hit.collider.tag == "BreakableWall")
+            {
+                DoDamage(hit.collider.gameObject, Stats._projectileDamage);
+                endCollider = hit.collider;
             }
         }
 
@@ -58,23 +53,21 @@ public class LaserProjectile : BehaviourProjectile
         foreach(RaycastHit2D hit in leftCast)
         {
             bool exitLoop = false;
-            switch(hit.collider.tag)
+            if(hit.collider.tag == "Player")
             {
-                case "Player":
-                case "BreakableWall":
-                    LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
-                    if(playerController)
-                        if(playerController.playerIndex == PlayerID)
-                            break;
-
+                LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
+                if(playerController.playerIndex != PlayerID)
+                {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
-                    exitLoop = true;
-                    break;
-                
-                default:
-                    // ignore if none of the above
-                    continue;
+                }
+                exitLoop = true;
+            }
+            else if(hit.collider.tag == "BreakableWall")
+            {
+                DoDamage(hit.collider.gameObject, Stats._projectileDamage);
+                endCollider = hit.collider;
+                exitLoop = true;
             }
 
             if(exitLoop) break;
@@ -84,42 +77,64 @@ public class LaserProjectile : BehaviourProjectile
         foreach(RaycastHit2D hit in rightCast)
         {
             bool exitLoop = false;
-            switch(hit.collider.tag)
+            if(hit.collider.tag == "Player")
             {
-                case "Player":
-                case "BreakableWall":
-                    LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
-                    if(playerController)
-                        if(playerController.playerIndex == PlayerID)
-                            break;
-
+                LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
+                if(playerController.playerIndex != PlayerID)
+                {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
-                    exitLoop = true;
-                    break;
-                
-                default:
-                    // ignore if none of the above
-                    continue;
+                }
+                exitLoop = true;
+            }
+            else if(hit.collider.tag == "BreakableWall")
+            {
+                DoDamage(hit.collider.gameObject, Stats._projectileDamage);
+                endCollider = hit.collider;
+                exitLoop = true;
             }
 
             if(exitLoop) break;
         }
 
+        // Why? Because welcome back to C#.
+        if(endCollider == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        if(endCollider.transform == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        // Make visuals
+        StartCoroutine(DoVisuals(endCollider.transform.position));
+        Destroy(gameObject, 1.0f);
         // Call OnTriggered only when no player got hit, give centercast's
         OnTriggerBehaviour(endCollider.transform.position, endCollider.transform.eulerAngles, this);
-        // Make visuals
-        DoVisuals(endCollider.transform.position);
     }
 
-    private void DoVisuals(Vector3 endPosition)
+    private IEnumerator DoVisuals(Vector3 endPosition)
     {
         LineRenderer lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.startColor = Stats._projectileColor;
+        lineRenderer.endColor = Stats._projectileColor;
         lineRenderer.SetWidth(width / 2, width / 2);
         Vector3[] joe = {this.transform.position, endPosition};
         lineRenderer.SetPositions(joe);
-        // Do particles at end position
-        
+
+        while(lineRenderer.startColor.a > 0)
+        {
+            Color lineColor = lineRenderer.startColor;
+            lineColor.a -= 1 * Time.deltaTime;
+            lineRenderer.startColor = lineColor;
+            lineRenderer.endColor = lineColor;
+            yield return null;
+        }
+
     }
 
     private void DoDamage(GameObject damagedPlayer, int damage)
