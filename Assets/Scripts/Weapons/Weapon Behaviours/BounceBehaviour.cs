@@ -17,4 +17,9 @@ public class BounceBehaviour : WeaponBehaviour
             NextBehaviour.Activate(startPosition, startRotation);
         }
     }
+
+    public override void OnTriggered(Vector3 position, Collision2D col)
+    {
+        throw new System.NotImplementedException();
+    }
 }

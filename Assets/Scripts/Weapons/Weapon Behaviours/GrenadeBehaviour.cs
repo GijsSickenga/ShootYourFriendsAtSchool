@@ -9,6 +9,31 @@ public class GrenadeBehaviour : WeaponBehaviour
     {
     }
 
+    [SerializeField]
+    GameObject _spawnedProjectileType;
+    // Overridden to return the bullet type spawned by a grenade when asked for
+    // bullet type by another behaviour. This prevents bouncing behaviour from
+    // instantiating grenades when it comes after grenade behaviour.
+    public override GameObject ProjectileType { get { return _spawnedProjectileType; } }
+
+    // On UI update.
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+
+        // Check if prefab set.
+        if (_spawnedProjectileType != null)
+        {
+            // Check if prefab contains BehaviourProjectile script.
+            BehaviourProjectile projectileScript = _spawnedProjectileType.GetComponent<BehaviourProjectile>();
+            if (projectileScript == null)
+            {
+                // No BehaviourProjectile script found, so reset to null.
+                _spawnedProjectileType = null;
+            }
+        }
+    }
+
     public override void Activate(Vector3 startPosition, Quaternion startRotation)
     {
         Debug.Log(Settings.variableName + " executed with value: " + Settings.LerpWeightInt());
@@ -16,5 +41,10 @@ public class GrenadeBehaviour : WeaponBehaviour
         {
             NextBehaviour.Activate(startPosition, startRotation);
         }
+    }
+
+    public override void OnTriggered(Vector3 position, Collision2D col)
+    {
+        throw new System.NotImplementedException();
     }
 }

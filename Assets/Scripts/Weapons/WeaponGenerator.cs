@@ -120,16 +120,8 @@ public class WeaponGenerator : MonoBehaviour
 	{
 		refreshWeaponTimer -= Time.deltaTime;
 
-		if (refreshWeaponTimer <= 0)
+		if (refreshWeaponTimer <= 0 || Input.GetKeyDown(KeyCode.G))
 		{
-			if(WeaponWeightScaler != null)
-				WeaponWeightScaler.CalculateWeights();
-            NewWeaponGeneration();
-		}
-
-		if (Input.GetKeyDown(KeyCode.G))
-		{
-			// Debug force generate weapons
 			if(WeaponWeightScaler != null)
 				WeaponWeightScaler.CalculateWeights();
             NewWeaponGeneration();

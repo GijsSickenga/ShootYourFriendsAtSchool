@@ -23,9 +23,9 @@ public abstract class WeaponBehaviour : ScriptableObject
             this.projectileColor = projectileColor;
 		}
 
-		float projectileSpeed;
-		int projectileDamage;
-		Color projectileColor;
+		public float projectileSpeed;
+        public int projectileDamage;
+        public Color projectileColor;
 	}
 
     /// <summary>
@@ -97,8 +97,39 @@ public abstract class WeaponBehaviour : ScriptableObject
 		}
     }
 
+    [SerializeField]
+    private GameObject _projectileType;
 	/// <summary>
-	/// Implement specific behaviour in subclass.
+	/// The projectile type prefab this behaviour spawns in Activate().
+	/// </summary>
+	public virtual GameObject ProjectileType { get { return _projectileType; } }
+
+	// On UI update.
+    protected virtual void OnValidate()
+    {
+        // Check if prefab set.
+        if (_projectileType != null)
+        {
+            // Check if prefab contains BehaviourProjectile script.
+            BehaviourProjectile projectileScript = _projectileType.GetComponent<BehaviourProjectile>();
+            if (projectileScript == null)
+            {
+                // No BehaviourProjectile script found, so reset to null.
+                _projectileType = null;
+            }
+        }
+    }
+
+	/// <summary>
+	/// Should be called by previous behaviour (or player weapon).
+	/// Should spawn an instance of the projectile type set in the behaviour.
 	/// </summary>
 	public abstract void Activate(Vector3 startPosition, Quaternion startRotation);
+
+	/// <summary>
+	/// Should be called by projectiles when they want to trigger the next behaviour.
+	/// Should call Activate() on the next behaviour for all positions where the current
+	/// behaviour wants to create a new projectile.
+	/// </summary>
+	public abstract void OnTriggered(Vector3 position, Collision2D col);
 }
