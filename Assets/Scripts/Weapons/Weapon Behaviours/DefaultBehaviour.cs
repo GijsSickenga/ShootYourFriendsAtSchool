@@ -21,7 +21,7 @@ public class DefaultBehaviour : WeaponBehaviour
         // Do other stuff with the new projectile here (initialization, etc.).
     }
 
-    public override void OnTriggered(Vector3 position, Vector3 direction)
+    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile)
     {
         if (NextBehaviour != null)
         {

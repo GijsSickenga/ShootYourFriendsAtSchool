@@ -16,14 +16,9 @@ public class LaserBehaviour : WeaponBehaviour
         {
             NextBehaviour.Activate(startPosition, startRotation);
         }
-
-        // Stats.projectileDamage
-        // Stats.projectileColor
-        // Settings.LerpWeight();
-        // PlayerID
     }
 
-    public override void OnTriggered(Vector3 position, Vector3 direction)
+    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile)
     {
         throw new System.NotImplementedException();
     }
