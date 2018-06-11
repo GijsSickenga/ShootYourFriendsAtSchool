@@ -28,12 +28,16 @@ public class GrenadeProjectile : DefaultProjectile
         }
 
         // Slow grenade over time.
-        _currentSpeed = Stats._projectileSpeed * ((_explosionTimer / EXPLOSION_TIMER_START) - (EXPLOSION_TIMER_START / 10));
+        _currentSpeed = (Stats._projectileSpeed / 2) * ((_explosionTimer / EXPLOSION_TIMER_START) + (EXPLOSION_TIMER_START / 10));
+        projectileRigidBody.velocity = transform.right * _currentSpeed;
     }
 
     protected virtual void Explode()
     {
-        OnTriggerBehaviour(transform.position, transform.rotation.eulerAngles);
+        if (OnTriggerBehaviour != null)
+        {
+            OnTriggerBehaviour(transform.position, transform.rotation.eulerAngles, this);
+        }
         SpawnParticleSystem(null);   
         Destroy(gameObject);
     }
@@ -70,10 +74,16 @@ public class GrenadeProjectile : DefaultProjectile
             reflected.Normalize();
             float angle = Mathf.Tan(reflected.y / reflected.x);
 
+            Vector2 newPos = rayCast.point + (reflected * 0.2f);
+            Vector3 newAngle = new Vector3(0, 0, Mathf.Rad2Deg * angle);
+
+            // Debug.DrawLine(newPos, reflected * 1 + newPos, Color.red, 2);
+            // Debug.DrawLine(newPos, -vel.normalized * 1 + newPos, Color.red, 2);
+
             // Don't trigger behaviour, instead bounce.
-            transform.position = rayCast.point;
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, Mathf.Rad2Deg * angle));
-            GetComponent<Rigidbody2D>().velocity = transform.right * _currentSpeed;
+            transform.position = newPos;
+            transform.rotation = Quaternion.Euler(newAngle);
+            projectileRigidBody.velocity = transform.right * _currentSpeed;
         }
     }
 }

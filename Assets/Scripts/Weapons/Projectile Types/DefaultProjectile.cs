@@ -11,11 +11,14 @@ public class DefaultProjectile : BehaviourProjectile
 
     public GameObject hitParticleSystem;
 
-    void Start()
+    protected Rigidbody2D projectileRigidBody;
+
+    protected virtual void Start()
     {
         PlayerID = PlayerID;
         GetComponent<SpriteRenderer>().color = Stats._projectileColor; 
         StartMoving();
+        projectileRigidBody = GetComponent<Rigidbody2D>();
     }
 
     public virtual void StartMoving()
@@ -86,7 +89,16 @@ public class DefaultProjectile : BehaviourProjectile
             reflected.Normalize();
             float angle = Mathf.Tan(reflected.y / reflected.x);
 
-            OnTriggerBehaviour(rayCast.point, new Vector3(0, 0, Mathf.Rad2Deg * angle));
+            Vector2 newPos = rayCast.point + (reflected * 0.2f);
+            Vector3 newAngle = new Vector3(0, 0, Mathf.Rad2Deg * angle);
+
+            // Debug.DrawLine(newPos, reflected * 1 + newPos, Color.red, 2);
+            // Debug.DrawLine(newPos, -vel.normalized * 1 + newPos, Color.red, 2);
+
+            if (OnTriggerBehaviour != null)
+            {
+                OnTriggerBehaviour(newPos, newAngle, this);
+            }
         }
 
         Destroy(gameObject);

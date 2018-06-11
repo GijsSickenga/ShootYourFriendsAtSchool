@@ -19,7 +19,7 @@ public class LaserBehaviour : WeaponBehaviour
         projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
     }
 
-    public override void OnTriggered(Vector3 position, Vector3 direction)
+    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile)
     {
         if(NextBehaviour != null)
         {
