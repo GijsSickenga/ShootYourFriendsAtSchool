@@ -39,8 +39,10 @@ public class LaserProjectile : BehaviourProjectile
                 
                 case "Player":
                 case "BreakableWall":
-                    if(hit.collider.gameObject.GetComponent<LocalPlayerController>().playerIndex == PlayerID)
-                        break;
+                    LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
+                    if(playerController)
+                        if(playerController.playerIndex == PlayerID)
+                            break;
                         
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
@@ -60,8 +62,10 @@ public class LaserProjectile : BehaviourProjectile
             {
                 case "Player":
                 case "BreakableWall":
-                    if(hit.collider.gameObject.GetComponent<LocalPlayerController>().playerIndex == PlayerID)
-                        continue;
+                    LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
+                    if(playerController)
+                        if(playerController.playerIndex == PlayerID)
+                            break;
 
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
@@ -84,8 +88,10 @@ public class LaserProjectile : BehaviourProjectile
             {
                 case "Player":
                 case "BreakableWall":
-                    if(hit.collider.gameObject.GetComponent<LocalPlayerController>().playerIndex == PlayerID)
-                        continue;
+                    LocalPlayerController playerController = hit.collider.gameObject.GetComponent<LocalPlayerController>();
+                    if(playerController)
+                        if(playerController.playerIndex == PlayerID)
+                            break;
 
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
