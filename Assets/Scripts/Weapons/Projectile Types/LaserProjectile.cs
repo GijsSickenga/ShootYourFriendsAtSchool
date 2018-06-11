@@ -101,7 +101,7 @@ public class LaserProjectile : BehaviourProjectile
         }
 
         // Call OnTriggered only when no player got hit, give centercast's
-        OnTriggerBehaviour(endCollider.transform.position, endCollider.transform.eulerAngles);
+        OnTriggerBehaviour(endCollider.transform.position, endCollider.transform.eulerAngles, this);
         // Make visuals
         DoVisuals(endCollider.transform.position);
     }

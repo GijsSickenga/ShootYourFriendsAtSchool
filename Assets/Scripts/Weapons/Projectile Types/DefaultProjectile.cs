@@ -92,6 +92,9 @@ public class DefaultProjectile : BehaviourProjectile
             Vector2 newPos = rayCast.point + (reflected * 0.2f);
             Vector3 newAngle = new Vector3(0, 0, Mathf.Rad2Deg * angle);
 
+            // Debug.DrawLine(newPos, reflected * 1 + newPos, Color.red, 2);
+            // Debug.DrawLine(newPos, -vel.normalized * 1 + newPos, Color.red, 2);
+
             if (OnTriggerBehaviour != null)
             {
                 OnTriggerBehaviour(newPos, newAngle, this);
