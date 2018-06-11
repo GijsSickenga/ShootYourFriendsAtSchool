@@ -113,7 +113,7 @@ public abstract class WeaponBehaviour : ScriptableObject
     }
 
     [SerializeField]
-    private GameObject _projectileType;
+    protected GameObject _projectileType;
 	/// <summary>
 	/// The projectile type prefab this behaviour spawns in Activate().
 	/// </summary>

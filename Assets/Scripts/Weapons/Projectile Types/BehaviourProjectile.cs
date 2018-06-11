@@ -17,9 +17,21 @@ public abstract class BehaviourProjectile : MonoBehaviour
 	/// </summary>
     public BehaviourTrigger OnTriggerBehaviour;
 
+	BehaviourWeight _behaviourWeight;
 	/// <summary>
 	/// Contains the settings of the corresponding behaviour.
 	/// You can choose to use these in the bullet if you need.
 	/// </summary>
-	public BehaviourWeight behaviourSettings;
+	public virtual BehaviourWeight BehaviourSettings
+	{
+		get
+		{
+			return _behaviourWeight;
+		}
+
+		set
+		{
+            _behaviourWeight = value;
+		}
+	}
 }
