@@ -99,8 +99,9 @@ public class GunUIComponent : MonoBehaviour
             // do anything with it.
             if (thresholdIndicator != null)
             {
+                System.Type type = weightedVariableType.GetType();
                 // If this is a behaviour, set the threshold marker.
-                if (weightedVariableType.GetType() == typeof(BehaviourWeight))
+                if (type == typeof(BehaviourWeight) || type == typeof(GrenadeWeight))
                 {
                     // Show threshold indicator.
                     thresholdIndicator.gameObject.SetActive(true);
