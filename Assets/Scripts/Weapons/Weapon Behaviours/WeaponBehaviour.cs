@@ -129,5 +129,5 @@ public abstract class WeaponBehaviour : ScriptableObject
 	/// Should call Activate() on the next behaviour for all positions where the current
 	/// behaviour wants to create a new projectile.
 	/// </summary>
-	public abstract void OnTriggered(Vector3 position, Collision2D col);
+	public abstract void OnTriggered(Vector3 position, Vector3 direction);
 }

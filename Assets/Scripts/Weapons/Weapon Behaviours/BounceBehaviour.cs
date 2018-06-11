@@ -18,7 +18,7 @@ public class BounceBehaviour : WeaponBehaviour
         }
     }
 
-    public override void OnTriggered(Vector3 position, Collision2D col)
+    public override void OnTriggered(Vector3 position, Vector3 direction)
     {
         throw new System.NotImplementedException();
     }

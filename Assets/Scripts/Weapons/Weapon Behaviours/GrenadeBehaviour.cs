@@ -50,7 +50,7 @@ public class GrenadeBehaviour : WeaponBehaviour
         projectileScript.BehaviourSettings = Settings;
     }
 
-    public override void OnTriggered(Vector3 position, Collision2D col)
+    public override void OnTriggered(Vector3 position, Vector3 direction)
     {
         if (NextBehaviour != null)
         {
