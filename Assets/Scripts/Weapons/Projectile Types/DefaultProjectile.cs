@@ -28,7 +28,7 @@ public class DefaultProjectile : BehaviourProjectile
         HandleCollision(other);
     }
 
-    void Update()
+    protected virtual void Update()
     {
         Vector2 direction = (GetComponent<Rigidbody2D>().velocity).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x);
