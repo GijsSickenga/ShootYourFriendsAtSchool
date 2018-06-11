@@ -11,20 +11,19 @@ public class LaserBehaviour : WeaponBehaviour
 
     public override void Activate(Vector3 startPosition, Quaternion startRotation)
     {
-        Debug.Log(Settings.variableName + " executed with value: " + Settings.LerpWeight());
-        if (NextBehaviour != null)
-        {
-            NextBehaviour.Activate(startPosition, startRotation);
-        }
-
-        // Stats.projectileDamage
-        // Stats.projectileColor
-        // Settings.LerpWeight();
-        // PlayerID
+        // Instantiate bullet type at given position with given rotation.
+        GameObject projectile = Instantiate(ProjectileType, startPosition, startRotation);
+        // Grab projectile script (and optionally cast to specific projectile type).
+        LaserProjectile projectileScript = (LaserProjectile)projectile.GetComponent<BehaviourProjectile>();
+        // Set delegate to this behaviour's trigger event.
+        projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
     }
 
     public override void OnTriggered(Vector3 position, Vector3 direction)
     {
-        throw new System.NotImplementedException();
+        if(NextBehaviour != null)
+        {
+            NextBehaviour.Activate(position, Quaternion.Euler(direction));
+        }
     }
 }
