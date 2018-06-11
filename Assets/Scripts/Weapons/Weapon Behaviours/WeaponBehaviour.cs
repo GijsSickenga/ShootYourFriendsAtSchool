@@ -122,12 +122,12 @@ public abstract class WeaponBehaviour : ScriptableObject
 	/// Should be called by previous behaviour (or player weapon).
 	/// Should spawn an instance of the projectile type set in the behaviour.
 	/// </summary>
-	public abstract void Activate(Vector3 startPosition, Quaternion startRotation);
+	public abstract void Activate(Vector3 startPosition, Quaternion startRotation, Collider2D col = null);
 
 	/// <summary>
 	/// Should be called by projectiles when they want to trigger the next behaviour.
 	/// Should call Activate() on the next behaviour for all positions where the current
 	/// behaviour wants to create a new projectile.
 	/// </summary>
-	public abstract void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile);
+	public abstract void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile, Collider2D col = null);
 }

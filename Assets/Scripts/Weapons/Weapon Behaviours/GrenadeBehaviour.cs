@@ -47,7 +47,7 @@ public class GrenadeBehaviour : WeaponBehaviour
         }
     }
 
-    public override void Activate(Vector3 startPosition, Quaternion startRotation)
+    public override void Activate(Vector3 startPosition, Quaternion startRotation, Collider2D col = null)
     {
         // Instantiate grenade.
         GameObject projectile = Instantiate(Settings.projectileType, startPosition, startRotation);
@@ -55,9 +55,12 @@ public class GrenadeBehaviour : WeaponBehaviour
         BehaviourProjectile projectileScript = projectile.GetComponent<BehaviourProjectile>();
         // Initialize grenade.
         projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
+
+        if(col != null)
+            Physics2D.IgnoreCollision(projectile.GetComponent<Collider2D>(), col.GetComponent<Collider2D>());
     }
 
-    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile)
+    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile, Collider2D col = null)
     {
         float rotationPerProjectile = 360 / (float)Settings.LerpWeightInt();
         for (int i = 0; i < Settings.LerpWeightInt(); i++)
@@ -66,7 +69,7 @@ public class GrenadeBehaviour : WeaponBehaviour
             if (NextBehaviour != null)
             {
                 // Activate next behaviour for every "created projectile".
-                NextBehaviour.Activate(position, Quaternion.Euler(newRotation));
+                NextBehaviour.Activate(position, Quaternion.Euler(newRotation), col);
             }
             else if (_spawnedProjectileType != null)
             {
@@ -76,6 +79,9 @@ public class GrenadeBehaviour : WeaponBehaviour
                 BehaviourProjectile projectileScript = newProjectile.GetComponent<BehaviourProjectile>();
                 // Initialize projectile.
                 projectileScript.Initialize(null, PlayerID, Settings, new WeaponStats(Stats._projectileSpeed, childProjectileDamage, Stats._projectileColor));
+
+                if(col != null)
+                    Physics2D.IgnoreCollision(newProjectile.GetComponent<Collider2D>(), col.GetComponent<Collider2D>());
             }
         }
     }

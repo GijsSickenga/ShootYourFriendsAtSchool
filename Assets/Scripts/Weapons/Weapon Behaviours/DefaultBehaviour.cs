@@ -9,7 +9,7 @@ public class DefaultBehaviour : WeaponBehaviour
     {
     }
 
-    public override void Activate(Vector3 startPosition, Quaternion startRotation)
+    public override void Activate(Vector3 startPosition, Quaternion startRotation, Collider2D col = null)
     {
         // Instantiate bullet type at given position with given rotation.
         GameObject projectile = Instantiate(ProjectileType, startPosition, startRotation);
@@ -21,13 +21,13 @@ public class DefaultBehaviour : WeaponBehaviour
         // Do other stuff with the new projectile here (initialization, etc.).
     }
 
-    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile)
+    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile, Collider2D col = null)
     {
         if (NextBehaviour != null)
         {
             // Activate the next behaviour at the calculated position.
             // Do this in a loop if you want to spawn multiple projectiles of the next behaviour.
-            NextBehaviour.Activate(position, Quaternion.Euler(direction));
+            NextBehaviour.Activate(position, Quaternion.Euler(direction), col);
         }
     }
 }

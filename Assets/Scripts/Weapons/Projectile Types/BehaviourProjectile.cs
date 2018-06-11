@@ -9,7 +9,7 @@ using UnityEngine;
 public abstract class BehaviourProjectile : MonoBehaviour
 {
 	// Behaviour trigger callback delegate type.
-	public delegate void BehaviourTrigger(Vector3 position, Vector3 direction, BehaviourProjectile projectile);
+	public delegate void BehaviourTrigger(Vector3 position, Vector3 direction, BehaviourProjectile projectile, Collider2D col = null);
 	/// <summary>
 	/// The function to call when this projectile wants to call the next behaviour.
 	/// Can be called on wall hit, explode, etc.

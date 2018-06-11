@@ -87,9 +87,9 @@ public class DefaultProjectile : BehaviourProjectile
             
             Vector2 reflected = Vector2.Reflect(vel, rayCast.normal);
             reflected.Normalize();
-            float angle = Mathf.Tan(reflected.y / reflected.x);
+            float angle = Mathf.Atan2(reflected.y, reflected.x);
 
-            Vector2 newPos = rayCast.point + (reflected * 0.2f);
+            Vector2 newPos = rayCast.point;
             Vector3 newAngle = new Vector3(0, 0, Mathf.Rad2Deg * angle);
 
             // Debug.DrawLine(newPos, reflected * 1 + newPos, Color.red, 2);
@@ -97,7 +97,7 @@ public class DefaultProjectile : BehaviourProjectile
 
             if (OnTriggerBehaviour != null)
             {
-                OnTriggerBehaviour(newPos, newAngle, this);
+                OnTriggerBehaviour(newPos, newAngle, this, other);
             }
         }
 

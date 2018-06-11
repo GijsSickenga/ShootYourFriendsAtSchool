@@ -9,7 +9,7 @@ public class LaserBehaviour : WeaponBehaviour
     {
     }
 
-    public override void Activate(Vector3 startPosition, Quaternion startRotation)
+    public override void Activate(Vector3 startPosition, Quaternion startRotation, Collider2D col = null)
     {
         // Instantiate bullet type at given position with given rotation.
         GameObject projectile = Instantiate(ProjectileType, startPosition, startRotation);
@@ -19,7 +19,7 @@ public class LaserBehaviour : WeaponBehaviour
         projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
     }
 
-    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile)
+    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile, Collider2D col = null)
     {
         if(NextBehaviour != null)
         {

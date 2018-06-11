@@ -9,7 +9,7 @@ public class BounceBehaviour : WeaponBehaviour
     {
     }
 
-    public override void Activate(Vector3 startPosition, Quaternion startRotation)
+    public override void Activate(Vector3 startPosition, Quaternion startRotation, Collider2D col = null)
     {
         if (PreviousBehaviour != null)
         {
@@ -39,7 +39,7 @@ public class BounceBehaviour : WeaponBehaviour
         }
     }
 
-    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile)
+    public override void OnTriggered(Vector3 position, Vector3 direction, BehaviourProjectile projectile, Collider2D col = null)
     {
         // Grab bounce script.
         BounceCounter counter = projectile.GetComponent<BounceCounter>();
@@ -56,7 +56,10 @@ public class BounceBehaviour : WeaponBehaviour
 
                 // Assign bounce script.
                 BounceCounter newCounter = newProjectile.AddComponent<BounceCounter>();
-                counter.numberOfBounces = counter.numberOfBounces - 1;
+                newCounter.numberOfBounces = counter.numberOfBounces - 1;
+
+                if (col != null)
+                    Physics2D.IgnoreCollision(newProjectile.GetComponent<Collider2D>(), col.GetComponent<Collider2D>());
             }
             else
             {
@@ -69,7 +72,10 @@ public class BounceBehaviour : WeaponBehaviour
 
                 // Assign bounce script.
                 BounceCounter newCounter = newProjectile.AddComponent<BounceCounter>();
-                counter.numberOfBounces = counter.numberOfBounces - 1;
+                newCounter.numberOfBounces = counter.numberOfBounces - 1;
+
+                if (col != null)
+                    Physics2D.IgnoreCollision(newProjectile.GetComponent<Collider2D>(), col.GetComponent<Collider2D>());
             }
         }
         else
@@ -77,7 +83,7 @@ public class BounceBehaviour : WeaponBehaviour
             if (NextBehaviour != null)
             {
                 // Activate next behaviour, since bouncing is done.
-                NextBehaviour.Activate(position, Quaternion.Euler(direction));
+                NextBehaviour.Activate(position, Quaternion.Euler(direction), col);
             }
         }
     }
