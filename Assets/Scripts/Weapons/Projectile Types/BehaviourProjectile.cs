@@ -16,4 +16,10 @@ public abstract class BehaviourProjectile : MonoBehaviour
 	/// Needs to pass along the arguments needed for the behaviour to handle the event.
 	/// </summary>
     public BehaviourTrigger OnTriggerBehaviour;
+
+	/// <summary>
+	/// Contains the settings of the corresponding behaviour.
+	/// You can choose to use these in the bullet if you need.
+	/// </summary>
+	public BehaviourWeight behaviourSettings;
 }

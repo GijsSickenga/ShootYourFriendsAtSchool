@@ -7,6 +7,13 @@ public class GrenadeBehaviour : WeaponBehaviour
 {
     public GrenadeBehaviour(int playerID, BehaviourWeight behaviourSettings, WeaponBehaviour nextBehaviour) : base(playerID, behaviourSettings, nextBehaviour)
     {
+        // Reduce damage of projectiles spawned from explosion.
+        if (NextBehaviour != null)
+        {
+            int newDamage = NextBehaviour.Stats._projectileDamage;
+            newDamage /= Settings.LerpWeightInt() / 2;
+            NextBehaviour.Stats.SetProjectileSpeed(newDamage);
+        }
     }
 
     [SerializeField]

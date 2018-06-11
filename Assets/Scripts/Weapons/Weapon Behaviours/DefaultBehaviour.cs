@@ -23,13 +23,16 @@ public class DefaultBehaviour : WeaponBehaviour
 
     public override void OnTriggered(Vector3 position, Collision2D col)
     {
-        // Do some calculations based on passed in collision data.
-        // Calculate a position and rotation for the next behaviour to spawn at.
-        Vector3 newPosition = position + new Vector3(1, 2, 3);
-        Vector3 newRotation = new Vector3(1, 2, 3);
+        if (NextBehaviour != null)
+        {
+            // Do some calculations based on passed in collision data.
+            // Calculate a position and rotation for the next behaviour to spawn at.
+            Vector3 newPosition = position + new Vector3(1, 2, 3);
+            Vector3 newRotation = new Vector3(1, 2, 3);
 
-        // Activate the next behaviour at the calculated position.
-        // Do this in a loop if you want to spawn multiple projectiles of the next behaviour.
-        NextBehaviour.Activate(newPosition, Quaternion.Euler(newRotation));
+            // Activate the next behaviour at the calculated position.
+            // Do this in a loop if you want to spawn multiple projectiles of the next behaviour.
+            NextBehaviour.Activate(newPosition, Quaternion.Euler(newRotation));
+        }
     }
 }

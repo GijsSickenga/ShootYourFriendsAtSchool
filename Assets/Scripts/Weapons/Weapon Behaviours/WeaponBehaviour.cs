@@ -18,14 +18,29 @@ public abstract class WeaponBehaviour : ScriptableObject
 	{
 		public WeaponStats(float projectileSpeed, int projectileDamage, Color projectileColor)
         {
-            this.projectileSpeed = projectileSpeed;
-            this.projectileDamage = projectileDamage;
-            this.projectileColor = projectileColor;
+            this._projectileSpeed = projectileSpeed;
+            this._projectileDamage = projectileDamage;
+            this._projectileColor = projectileColor;
 		}
 
-		public float projectileSpeed;
-        public int projectileDamage;
-        public Color projectileColor;
+		public float _projectileSpeed;
+        public int _projectileDamage;
+        public Color _projectileColor;
+
+        public void SetProjectileSpeed(float newSpeed)
+        {
+            _projectileSpeed = newSpeed;
+        }
+
+        public void SetProjectileDamage(int newDamage)
+        {
+            _projectileDamage = newDamage;
+        }
+
+        public void SetProjectileSpeed(Color newColor)
+        {
+            _projectileColor = newColor;
+        }
 	}
 
     /// <summary>
