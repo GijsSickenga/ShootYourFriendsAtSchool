@@ -9,28 +9,18 @@ public class DefaultProjectile : BehaviourProjectile
 
     // Wss de hele bulletbase copy/pasta
 
-
-    //Damage per bullet (Player health = 100)
-    public int damage;
-
-    //Speed of the bullet
-    public float bulletSpeed;
-    public int playerIndex;
-
     public GameObject hitParticleSystem;
 
     void Start()
     {
-        damage = Stats._projectileDamage;
-        bulletSpeed = Stats._projectileSpeed;
-        playerIndex = PlayerID;
+        PlayerID = PlayerID;
         GetComponent<SpriteRenderer>().color = Stats._projectileColor; 
         StartMoving();
     }
 
     public virtual void StartMoving()
     {
-        GetComponent<Rigidbody2D>().velocity = transform.right * bulletSpeed;
+        GetComponent<Rigidbody2D>().velocity = transform.right * Stats._projectileSpeed;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -57,7 +47,7 @@ public class DefaultProjectile : BehaviourProjectile
 
         if (other.CompareTag("Player"))
         {
-            if (playerIndex == other.GetComponent<LocalPlayerController>().playerIndex)
+            if (PlayerID == other.GetComponent<LocalPlayerController>().playerIndex)
             {
                 return;
             }
@@ -76,14 +66,14 @@ public class DefaultProjectile : BehaviourProjectile
 
         if (health != null)
         {
-            //Giving lastHit the playerIndex of the shooting player
-            health.lastHit = playerIndex;
+            //Giving lastHit the PlayerID of the shooting player
+            health.lastHit = PlayerID;
             health.ResetLastHitTimer();
-            health.Damage(damage);
+            health.Damage(Stats._projectileDamage);
         }
         else if (breakHealth != null)
         {
-            breakHealth.Damage(damage);
+            breakHealth.Damage(Stats._projectileDamage);
         }
         else
         {

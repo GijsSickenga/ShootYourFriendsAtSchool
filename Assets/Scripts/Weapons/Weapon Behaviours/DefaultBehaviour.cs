@@ -25,14 +25,9 @@ public class DefaultBehaviour : WeaponBehaviour
     {
         if (NextBehaviour != null)
         {
-            // Do some calculations based on passed in collision data.
-            // Calculate a position and rotation for the next behaviour to spawn at.
-            Vector3 newPosition = position;
-            Vector3 newRotation = direction;
-
             // Activate the next behaviour at the calculated position.
             // Do this in a loop if you want to spawn multiple projectiles of the next behaviour.
-            NextBehaviour.Activate(newPosition, Quaternion.Euler(newRotation));
+            NextBehaviour.Activate(position, Quaternion.Euler(direction));
         }
     }
 }

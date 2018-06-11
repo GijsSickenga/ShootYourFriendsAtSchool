@@ -41,23 +41,23 @@ public class GrenadeBehaviour : WeaponBehaviour
 
     public override void Activate(Vector3 startPosition, Quaternion startRotation)
     {
-        // Instantiate grenade bullet.
+        // Instantiate grenade.
         GameObject projectile = Instantiate(Settings.projectileType, startPosition, startRotation);
         // Grab projectile script.
         GrenadeProjectile projectileScript = (GrenadeProjectile)projectile.GetComponent<BehaviourProjectile>();
-        // Set delegate to this behaviour's trigger event.
-        projectileScript.OnTriggerBehaviour = OnTriggered;
-        projectileScript.BehaviourSettings = Settings;
+        // Initialize grenade.
+        projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
     }
 
     public override void OnTriggered(Vector3 position, Vector3 direction)
     {
         if (NextBehaviour != null)
         {
-            List<Vector3> positions = new List<Vector3>();
-            for (int i = 0; ; )
+            float rotationPerProjectile = 360 / (float)Settings.LerpWeightInt();
+            for (int i = 0; i < Settings.LerpWeightInt(); i++)
             {
-
+                Vector3 newRotation = new Vector3(0, 0, rotationPerProjectile * i);
+                NextBehaviour.Activate(position, Quaternion.Euler(newRotation));
             }
         }
     }
