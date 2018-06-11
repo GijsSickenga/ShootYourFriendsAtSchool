@@ -83,8 +83,10 @@ public class DefaultProjectile : BehaviourProjectile
             rayCast = Physics2D.Raycast(transform.position, vel);
             
             Vector2 reflected = Vector2.Reflect(vel, rayCast.normal);
+            reflected.Normalize();
+            float angle = Mathf.Tan(reflected.y / reflected.x);
 
-            OnTriggerBehaviour(rayCast.point, reflected);
+            OnTriggerBehaviour(rayCast.point, new Vector3(0, 0, Mathf.Rad2Deg * angle));
         }
 
         Destroy(gameObject);
