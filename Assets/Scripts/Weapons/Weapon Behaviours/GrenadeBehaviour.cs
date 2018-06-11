@@ -24,10 +24,8 @@ public class GrenadeBehaviour : WeaponBehaviour
     public override GameObject ProjectileType { get { return _spawnedProjectileType; } }
 
     // On UI update.
-    protected override void OnValidate()
+    protected void OnValidate()
     {
-        base.OnValidate();
-
         // Check if prefab set.
         if (_spawnedProjectileType != null)
         {
@@ -43,15 +41,24 @@ public class GrenadeBehaviour : WeaponBehaviour
 
     public override void Activate(Vector3 startPosition, Quaternion startRotation)
     {
-        Debug.Log(Settings.variableName + " executed with value: " + Settings.LerpWeightInt());
-        if (NextBehaviour != null)
-        {
-            NextBehaviour.Activate(startPosition, startRotation);
-        }
+        // Instantiate grenade bullet.
+        GameObject projectile = Instantiate(Settings.projectileType, startPosition, startRotation);
+        // Grab projectile script.
+        GrenadeProjectile projectileScript = (GrenadeProjectile)projectile.GetComponent<BehaviourProjectile>();
+        // Set delegate to this behaviour's trigger event.
+        projectileScript.OnTriggerBehaviour = OnTriggered;
+        projectileScript.BehaviourSettings = Settings;
     }
 
     public override void OnTriggered(Vector3 position, Collision2D col)
     {
-        throw new System.NotImplementedException();
+        if (NextBehaviour != null)
+        {
+            List<Vector3> positions = new List<Vector3>();
+            for (int i = 0; ; )
+            {
+
+            }
+        }
     }
 }

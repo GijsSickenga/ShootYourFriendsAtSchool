@@ -112,28 +112,11 @@ public abstract class WeaponBehaviour : ScriptableObject
 		}
     }
 
-    [SerializeField]
-    protected GameObject _projectileType;
+    
 	/// <summary>
 	/// The projectile type prefab this behaviour spawns in Activate().
 	/// </summary>
-	public virtual GameObject ProjectileType { get { return _projectileType; } }
-
-	// On UI update.
-    protected virtual void OnValidate()
-    {
-        // Check if prefab set.
-        if (_projectileType != null)
-        {
-            // Check if prefab contains BehaviourProjectile script.
-            BehaviourProjectile projectileScript = _projectileType.GetComponent<BehaviourProjectile>();
-            if (projectileScript == null)
-            {
-                // No BehaviourProjectile script found, so reset to null.
-                _projectileType = null;
-            }
-        }
-    }
+	public virtual GameObject ProjectileType { get { return Settings.projectileType; } }
 
 	/// <summary>
 	/// Should be called by previous behaviour (or player weapon).

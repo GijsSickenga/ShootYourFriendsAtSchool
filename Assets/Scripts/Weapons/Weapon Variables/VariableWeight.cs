@@ -30,7 +30,7 @@ public class VariableWeight : ScriptableObject
 		return Mathf.RoundToInt(LerpWeight());
 	}
 
-	public void OnValidate()
+	public virtual void OnValidate()
 	{
 		bias = Mathf.Max(bias, 0);
 	}

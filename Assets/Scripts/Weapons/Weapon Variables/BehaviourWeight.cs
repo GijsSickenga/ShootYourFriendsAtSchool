@@ -16,6 +16,27 @@ public class BehaviourWeight : VariableWeight
     [Tooltip("The behaviour script associated with this behaviour.")]
 	public WeaponBehaviour behaviourScript;
 
+    [Tooltip("The projectile type associated with this behaviour.")]
+    public GameObject projectileType;
+
+    // On UI update.
+    public override void OnValidate()
+    {
+		base.OnValidate();
+
+        // Check if prefab set.
+        if (projectileType != null)
+        {
+            // Check if prefab contains BehaviourProjectile script.
+            BehaviourProjectile projectileScript = projectileType.GetComponent<BehaviourProjectile>();
+            if (projectileScript == null)
+            {
+                // No BehaviourProjectile script found, so reset to null.
+                projectileType = null;
+            }
+        }
+    }
+
 	public override float LerpWeight()
 	{
 		// Return 0 if below threshold weight.
