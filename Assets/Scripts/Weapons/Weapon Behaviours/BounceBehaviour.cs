@@ -17,12 +17,13 @@ public class BounceBehaviour : WeaponBehaviour
             GameObject projectile = Instantiate(PreviousBehaviour.ProjectileType, startPosition, startRotation);
             // Grab projectile script.
             BehaviourProjectile projectileScript = projectile.GetComponent<BehaviourProjectile>();
-            // Initialize previous projectile.
-            projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
 
             // Assign bounce script.
             BounceCounter counter = projectile.AddComponent<BounceCounter>();
             counter.numberOfBounces = Settings.LerpWeightInt();
+
+            // Initialize previous projectile.
+            projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
         }
         else
         {
@@ -30,12 +31,13 @@ public class BounceBehaviour : WeaponBehaviour
             GameObject projectile = Instantiate(ProjectileType, startPosition, startRotation);
             // Grab projectile script.
             BehaviourProjectile projectileScript = projectile.GetComponent<BehaviourProjectile>();
-            // Initialize default projectile.
-            projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
 
             // Assign bounce script.
             BounceCounter counter = projectile.AddComponent<BounceCounter>();
             counter.numberOfBounces = Settings.LerpWeightInt();
+
+            // Initialize default projectile.
+            projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
         }
     }
 
@@ -51,12 +53,13 @@ public class BounceBehaviour : WeaponBehaviour
                 GameObject newProjectile = Instantiate(PreviousBehaviour.ProjectileType, position, Quaternion.Euler(direction));
                 // Grab projectile script.
                 BehaviourProjectile projectileScript = newProjectile.GetComponent<BehaviourProjectile>();
-                // Initialize previous projectile.
-                projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
 
                 // Assign bounce script.
                 BounceCounter newCounter = newProjectile.AddComponent<BounceCounter>();
                 newCounter.numberOfBounces = counter.numberOfBounces - 1;
+
+                // Initialize previous projectile.
+                projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
 
                 if (col != null)
                     Physics2D.IgnoreCollision(newProjectile.GetComponent<Collider2D>(), col.GetComponent<Collider2D>());
@@ -67,12 +70,13 @@ public class BounceBehaviour : WeaponBehaviour
                 GameObject newProjectile = Instantiate(ProjectileType, position, Quaternion.Euler(direction));
                 // Grab projectile script.
                 BehaviourProjectile projectileScript = newProjectile.GetComponent<BehaviourProjectile>();
-                // Initialize default projectile.
-                projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
 
                 // Assign bounce script.
                 BounceCounter newCounter = newProjectile.AddComponent<BounceCounter>();
                 newCounter.numberOfBounces = counter.numberOfBounces - 1;
+                
+                // Initialize default projectile.
+                projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
 
                 if (col != null)
                     Physics2D.IgnoreCollision(newProjectile.GetComponent<Collider2D>(), col.GetComponent<Collider2D>());
