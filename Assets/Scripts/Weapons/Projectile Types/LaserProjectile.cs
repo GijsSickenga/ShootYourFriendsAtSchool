@@ -7,6 +7,7 @@ public class LaserProjectile : BehaviourProjectile
     // Hier alle code voor het afhandelen van de laser
     // Call zelf ergens OnTriggerBehaviour (kijk in base class)
     private float width = 5;
+    private readonly float LASER_LIFETIME = 0.5f;
 
     public override void Initialize(BehaviourTrigger OnTriggerCallback, int playerID, BehaviourWeight settings, WeaponBehaviour.WeaponStats stats)
     {
@@ -25,6 +26,7 @@ public class LaserProjectile : BehaviourProjectile
         RaycastHit2D[] rightCast = Physics2D.RaycastAll(transform.TransformPoint(Vector3.right * (width / 2)), transform.right, Mathf.Infinity);
 
         Collider2D endCollider = new Collider2D();
+        RaycastHit2D endHit = new RaycastHit2D();
         // Check center raycasts for hits (everything, players/walls)
         if(centerCast)
         {
@@ -40,12 +42,14 @@ public class LaserProjectile : BehaviourProjectile
                 {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
+                    endHit = hit;
                 }
             }
             else if(hit.collider.tag == "BreakableWall")
             {
                 DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                 endCollider = hit.collider;
+                endHit = hit;
             }
         }
 
@@ -60,6 +64,7 @@ public class LaserProjectile : BehaviourProjectile
                 {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
+                    endHit = hit;
                 }
                 exitLoop = true;
             }
@@ -67,6 +72,7 @@ public class LaserProjectile : BehaviourProjectile
             {
                 DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                 endCollider = hit.collider;
+                endHit = hit;
                 exitLoop = true;
             }
 
@@ -84,6 +90,7 @@ public class LaserProjectile : BehaviourProjectile
                 {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
+                    endHit = hit;
                 }
                 exitLoop = true;
             }
@@ -91,6 +98,7 @@ public class LaserProjectile : BehaviourProjectile
             {
                 DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                 endCollider = hit.collider;
+                endHit = hit;
                 exitLoop = true;
             }
 
@@ -111,10 +119,22 @@ public class LaserProjectile : BehaviourProjectile
         }
 
         // Make visuals
-        StartCoroutine(DoVisuals(endCollider.transform.position));
-        Destroy(gameObject, 1.0f);
+        StartCoroutine(DoVisuals(endHit.point));
+        Destroy(gameObject, LASER_LIFETIME);
+
+        // Nothing with health hit
+        RaycastHit2D rayCast;
+        Vector2 vel = GetComponent<Rigidbody2D>().velocity;
+        rayCast = Physics2D.Raycast(transform.position, vel);
+        
+        Vector2 reflected = Vector2.Reflect(vel, rayCast.normal);
+        reflected.Normalize();
+        float angle = Mathf.Atan2(reflected.y, reflected.x);
+
+        Vector2 newPos = rayCast.point;
+        Vector3 newAngle = new Vector3(0, 0, Mathf.Rad2Deg * angle);
         // Call OnTriggered only when no player got hit, give centercast's
-        OnTriggerBehaviour(endCollider.transform.position, endCollider.transform.eulerAngles, this);
+        OnTriggerBehaviour(endHit.point, endCollider.transform.eulerAngles, this);
     }
 
     private IEnumerator DoVisuals(Vector3 endPosition)
@@ -129,7 +149,7 @@ public class LaserProjectile : BehaviourProjectile
         while(lineRenderer.startColor.a > 0)
         {
             Color lineColor = lineRenderer.startColor;
-            lineColor.a -= 1 * Time.deltaTime;
+            lineColor.a -= LASER_LIFETIME * Time.deltaTime;
             lineRenderer.startColor = lineColor;
             lineRenderer.endColor = lineColor;
             yield return null;
