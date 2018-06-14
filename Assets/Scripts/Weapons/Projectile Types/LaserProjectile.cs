@@ -26,7 +26,7 @@ public class LaserProjectile : BehaviourProjectile
         RaycastHit2D[] rightCast = Physics2D.RaycastAll(transform.TransformPoint(Vector3.right * (width / 2)), transform.right, Mathf.Infinity);
 
         Collider2D endCollider = new Collider2D();
-        RaycastHit2D endHit = new RaycastHit2D();
+        Vector2 endPoint = Vector2.zero;
         // Check center raycasts for hits (everything, players/walls)
         if(centerCast)
         {
@@ -34,6 +34,7 @@ public class LaserProjectile : BehaviourProjectile
             if(hit.collider.tag == "Untagged")
             {
                 endCollider = hit.collider;
+                endPoint = hit.point;
             }
             else if(hit.collider.tag == "Player")
             {
@@ -42,14 +43,14 @@ public class LaserProjectile : BehaviourProjectile
                 {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
-                    endHit = hit;
+                    endPoint = hit.point;
                 }
             }
             else if(hit.collider.tag == "BreakableWall")
             {
                 DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                 endCollider = hit.collider;
-                endHit = hit;
+                endPoint = hit.point;
             }
         }
 
@@ -64,7 +65,7 @@ public class LaserProjectile : BehaviourProjectile
                 {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
-                    endHit = hit;
+                    endPoint = hit.point;
                 }
                 exitLoop = true;
             }
@@ -72,7 +73,7 @@ public class LaserProjectile : BehaviourProjectile
             {
                 DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                 endCollider = hit.collider;
-                endHit = hit;
+                endPoint = hit.point;
                 exitLoop = true;
             }
 
@@ -90,7 +91,7 @@ public class LaserProjectile : BehaviourProjectile
                 {
                     DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                     endCollider = hit.collider;
-                    endHit = hit;
+                    endPoint = hit.point;
                 }
                 exitLoop = true;
             }
@@ -98,7 +99,7 @@ public class LaserProjectile : BehaviourProjectile
             {
                 DoDamage(hit.collider.gameObject, Stats._projectileDamage);
                 endCollider = hit.collider;
-                endHit = hit;
+                endPoint = hit.point;
                 exitLoop = true;
             }
 
@@ -119,22 +120,21 @@ public class LaserProjectile : BehaviourProjectile
         }
 
         // Make visuals
-        StartCoroutine(DoVisuals(endHit.point));
+        StartCoroutine(DoVisuals(endPoint));
         Destroy(gameObject, LASER_LIFETIME);
 
         // Nothing with health hit
         RaycastHit2D rayCast;
-        Vector2 vel = GetComponent<Rigidbody2D>().velocity;
+        Vector2 vel = endPoint;
         rayCast = Physics2D.Raycast(transform.position, vel);
         
         Vector2 reflected = Vector2.Reflect(vel, rayCast.normal);
         reflected.Normalize();
         float angle = Mathf.Atan2(reflected.y, reflected.x);
 
-        Vector2 newPos = rayCast.point;
         Vector3 newAngle = new Vector3(0, 0, Mathf.Rad2Deg * angle);
         // Call OnTriggered only when no player got hit, give centercast's
-        OnTriggerBehaviour(endHit.point, endCollider.transform.eulerAngles, this);
+        OnTriggerBehaviour(endPoint, newAngle, this);
     }
 
     private IEnumerator DoVisuals(Vector3 endPosition)
