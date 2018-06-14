@@ -23,7 +23,7 @@ public class BounceBehaviour : WeaponBehaviour
             counter.numberOfBounces = Settings.LerpWeightInt();
 
             // Initialize previous projectile.
-            projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
+            projectileScript.Initialize(OnTriggered, PlayerID, PreviousBehaviour.Settings, Stats);
         }
         else
         {
@@ -59,7 +59,7 @@ public class BounceBehaviour : WeaponBehaviour
                 newCounter.numberOfBounces = counter.numberOfBounces - 1;
 
                 // Initialize previous projectile.
-                projectileScript.Initialize(OnTriggered, PlayerID, Settings, Stats);
+                projectileScript.Initialize(OnTriggered, PlayerID, PreviousBehaviour.Settings, Stats);
 
                 if (col != null)
                     Physics2D.IgnoreCollision(newProjectile.GetComponent<Collider2D>(), col.GetComponent<Collider2D>());

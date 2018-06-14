@@ -6,18 +6,17 @@ public class LaserProjectile : BehaviourProjectile
 {
     // Hier alle code voor het afhandelen van de laser
     // Call zelf ergens OnTriggerBehaviour (kijk in base class)
-    private float width = 5;
+    private float width = 5000;
     private readonly float LASER_LIFETIME = 0.5f;
 
     public override void Initialize(BehaviourTrigger OnTriggerCallback, int playerID, BehaviourWeight settings, WeaponBehaviour.WeaponStats stats)
     {
         base.Initialize(OnTriggerCallback, playerID, settings, stats);
+        width = BehaviourSettings.LerpWeight();
         Activate();
     }
     public void Activate()
     {
-        width = BehaviourSettings.LerpWeight();
-        
         // Calculate where to make three raycasts (startposition with direction)
         // Make 3 raycasts (left, right, center)
         // Run raycasts
@@ -125,7 +124,7 @@ public class LaserProjectile : BehaviourProjectile
 
         // Nothing with health hit
         RaycastHit2D rayCast;
-        Vector2 vel = endPoint;
+        Vector2 vel = transform.right;
         rayCast = Physics2D.Raycast(transform.position, vel);
         
         Vector2 reflected = Vector2.Reflect(vel, rayCast.normal);
